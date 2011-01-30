@@ -3,16 +3,20 @@
 //
 
 #import "ATPagingViewDemoAppDelegate.h"
+#import "DemoViewController.h"
+
 
 @implementation ATPagingViewDemoAppDelegate
 
 @synthesize window;
+@synthesize navigationController;
 
 
 #pragma mark -
 #pragma mark Application lifecycle
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+	[self.window addSubview:self.navigationController.view];
     [self.window makeKeyAndVisible];
     return YES;
 }
