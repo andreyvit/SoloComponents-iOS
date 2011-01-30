@@ -18,8 +18,10 @@
 
 	// state
 	NSInteger _pageCount;
+	NSInteger _currentPageIndex;
 	NSMutableSet *_recycledPages;
 	NSMutableSet *_visiblePages;
+	BOOL _rotationInProgress;
 }
 
 @property(nonatomic, assign) id<ATPagingViewDelegate> delegate;
@@ -28,9 +30,17 @@
 
 @property(nonatomic, assign) NSInteger pagesToPreload;
 
+@property(nonatomic, readonly) NSInteger pageCount;
+
+@property(nonatomic, assign, readonly) NSInteger currentPageIndex;
+
+- (UIView *)viewForPageAtIndex:(NSUInteger)index;
+
 - (UIView *)dequeueReusablePage;
 
-@property(nonatomic, readonly) NSInteger pageCount;
+- (void)willAnimateRotation;
+
+- (void)didRotate;
 
 @end
 
