@@ -3,6 +3,7 @@
 //
 
 #import "DemoViewController.h"
+#import "DemoPageView.h"
 
 
 @implementation DemoViewController
@@ -25,6 +26,22 @@
 
 - (void)dealloc {
     [super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark ATPagingViewDelegate methods
+
+- (NSInteger)numberOfPagesInPagingView:(ATPagingView *)pagingView {
+	return 10;
+}
+
+- (UIView *)viewForPageInPagingView:(ATPagingView *)pagingView atIndex:(NSInteger)index {
+	UIView *view = [pagingView dequeueReusablePage];
+	if (view == nil) {
+		view = [[[DemoPageView alloc] init] autorelease];
+	}
+	return view;
 }
 
 

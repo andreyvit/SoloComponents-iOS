@@ -15,6 +15,7 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		43AD680412F5773E0093AF73 /* ATPagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AD680312F5773E0093AF73 /* ATPagingView.m */; };
 		43AD680712F579AD0093AF73 /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AD680612F579AD0093AF73 /* DemoViewController.m */; };
+		43AD684F12F5C67F0093AF73 /* DemoPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43AD684E12F5C67F0093AF73 /* DemoPageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		43AD680312F5773E0093AF73 /* ATPagingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ATPagingView.m; path = ../ATPagingView.m; sourceTree = SOURCE_ROOT; };
 		43AD680512F579AD0093AF73 /* DemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
 		43AD680612F579AD0093AF73 /* DemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoViewController.m; sourceTree = "<group>"; };
+		43AD684D12F5C67F0093AF73 /* DemoPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoPageView.h; sourceTree = "<group>"; };
+		43AD684E12F5C67F0093AF73 /* DemoPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoPageView.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* ATPagingViewDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ATPagingViewDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -55,6 +58,8 @@
 				1D3623250D0F684500981E51 /* ATPagingViewDemoAppDelegate.m */,
 				43AD680512F579AD0093AF73 /* DemoViewController.h */,
 				43AD680612F579AD0093AF73 /* DemoViewController.m */,
+				43AD684D12F5C67F0093AF73 /* DemoPageView.h */,
+				43AD684E12F5C67F0093AF73 /* DemoPageView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -181,6 +186,7 @@
 				1D3623260D0F684500981E51 /* ATPagingViewDemoAppDelegate.m in Sources */,
 				43AD680412F5773E0093AF73 /* ATPagingView.m in Sources */,
 				43AD680712F579AD0093AF73 /* DemoViewController.m in Sources */,
+				43AD684F12F5C67F0093AF73 /* DemoPageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
