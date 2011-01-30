@@ -6,7 +6,7 @@
 
 @protocol ATPagingViewDelegate;
 
-
+// a wrapper around UIScrollView in (horizontal) paging mode, with an API similar to UITableView
 @interface ATPagingView : UIView {
 	// subviews
 	UIScrollView *_scrollView;
@@ -26,21 +26,23 @@
 
 @property(nonatomic, assign) id<ATPagingViewDelegate> delegate;
 
-@property(nonatomic, assign) CGFloat gapBetweenPages;
+@property(nonatomic, assign) CGFloat gapBetweenPages;  // default is 20
 
-@property(nonatomic, assign) NSInteger pagesToPreload;
+@property(nonatomic, assign) NSInteger pagesToPreload;  // number of invisible pages to keep loaded to each side of the visible pages, default is 0
 
 @property(nonatomic, readonly) NSInteger pageCount;
 
 @property(nonatomic, assign, readonly) NSInteger currentPageIndex;
 
-- (UIView *)viewForPageAtIndex:(NSUInteger)index;
+- (void)reloadPages;  // must be called at least once to display something
 
-- (UIView *)dequeueReusablePage;
+- (UIView *)viewForPageAtIndex:(NSUInteger)index;  // nil if not loaded
 
-- (void)willAnimateRotation;
+- (UIView *)dequeueReusablePage;  // nil if none
 
-- (void)didRotate;
+- (void)willAnimateRotation;  // call this from willAnimateRotationToInterfaceOrientation:duration:
+
+- (void)didRotate;  // call this from didRotateFromInterfaceOrientation:
 
 @end
 

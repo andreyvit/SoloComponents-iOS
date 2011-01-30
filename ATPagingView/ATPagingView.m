@@ -82,7 +82,7 @@
     return nil;
 }
 
-- (void)reloadRows {
+- (void)reloadPages {
 	_pageCount = [_delegate numberOfPagesInPagingView:self];
 	[self configureScrollView];
 	[self recycleAllPages];
@@ -290,7 +290,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 	if (self.pagingView.pageCount == 0)
-		[self.pagingView reloadRows];
+		[self.pagingView reloadPages];
 }
 
 
