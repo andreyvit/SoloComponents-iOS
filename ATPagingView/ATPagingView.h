@@ -47,9 +47,15 @@
 
 @protocol ATPagingViewDelegate <NSObject>
 
+@required
+
 - (NSInteger)numberOfPagesInPagingView:(ATPagingView *)pagingView;
 
 - (UIView *)viewForPageInPagingView:(ATPagingView *)pagingView atIndex:(NSInteger)index;
+
+@optional
+
+- (void)currentPageDidChangeInPagingView:(ATPagingView *)pagingView;
 
 @end
 

@@ -28,6 +28,11 @@
     [super dealloc];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	[self currentPageDidChangeInPagingView:self.pagingView];
+}
+
 
 #pragma mark -
 #pragma mark ATPagingViewDelegate methods
@@ -42,6 +47,10 @@
 		view = [[[DemoPageView alloc] init] autorelease];
 	}
 	return view;
+}
+
+- (void)currentPageDidChangeInPagingView:(ATPagingView *)pagingView {
+	self.navigationItem.title = [NSString stringWithFormat:@"%d of %d", pagingView.currentPageIndex+1, pagingView.pageCount];
 }
 
 

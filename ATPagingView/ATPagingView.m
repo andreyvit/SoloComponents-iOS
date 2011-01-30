@@ -122,7 +122,8 @@
 	// update contentSize
 	[self configureScrollView];
 
-	// adjust frames according to the new page size - this does not cause any visible changes
+	// adjust frames according to the new page size - this does not cause any visible changes,
+	// because we move the pages and adjust contentOffset simultaneously
 	for (UIView *view in _visiblePages)
 		[self configurePage:view forIndex:view.tag];
 	_scrollView.contentOffset = CGPointMake(_currentPageIndex * _scrollView.frame.size.width, 0);
@@ -187,6 +188,8 @@
 	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
 	if (newPageIndex != _currentPageIndex) {
 		_currentPageIndex = newPageIndex;
+		if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
+			[_delegate currentPageDidChangeInPagingView:self];
 		NSLog(@"_currentPageIndex == %d", _currentPageIndex);
 	}
 }
