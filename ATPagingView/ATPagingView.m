@@ -39,6 +39,9 @@
 		_gapBetweenPages = 20.0;
 		_pagesToPreload = 0;
 
+		// We are using an oversized UIScrollView to implement interpage gaps,
+		// and we need it to clipped on the sides. This is important when
+		// someone uses ATPagingView in a non-fullscreen layout.
 		self.clipsToBounds = YES;
 
 		_scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
@@ -154,6 +157,16 @@
 #pragma mark -
 #pragma mark Rotation
 
+// Why do we even have to handle rotation separately, instead of just sticking
+// more magic inside layoutSubviews?
+//
+// This is how I've been doing rotatable paged screens since long ago.
+// However, since layoutSubviews is more or less an equivalent of
+// willAnimateRotation, and since there is probably a way to catch didRotate,
+// maybe we can get rid of this special case.
+//
+// Just needs more work.
+
 - (void)willAnimateRotation {
 	_rotationInProgress = YES;
 
@@ -164,23 +177,23 @@
 		}
 	[_visiblePages minusSet:_recycledPages];
 
-	// we're inside an animation block, this has two consequences:
+	// We're inside an animation block, this has two consequences:
 	//
-	// 1) we need to resize the page view now (so that the size change is animated)
+	// 1) we need to resize the page view now (so that the size change is animated);
 	//
 	// 2) we cannot update the scroll view's contentOffset to align it with the new
-	// page boundaries (since any such change will be animated in very funny ways)
+	// page boundaries (since any such change will be animated in very funny ways).
 	//
-	// (note that the scroll view has already been resized by now)
+	// (Note that the scroll view has already been resized by now.)
 	//
-	// so we set the new size, but keep the old position here
+	// So we set the new size, but keep the old position here.
 	CGSize pageSize = _scrollView.frame.size;
 	[self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(_scrollView.contentOffset.x, 0, pageSize.width - _gapBetweenPages, pageSize.height);
 }
 
 - (void)didRotate {
-	// adjust frames according to the new page size - this does not cause any visible changes,
-	// because we move the pages and adjust contentOffset simultaneously
+	// Adjust frames according to the new page size - this does not cause any visible
+	// changes, because we move the pages and adjust contentOffset simultaneously.
 	for (UIView *view in _visiblePages)
 		[self configurePage:view forIndex:view.tag];
 	_scrollView.contentOffset = CGPointMake(_currentPageIndex * _scrollView.frame.size.width, 0);
