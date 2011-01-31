@@ -7,7 +7,7 @@
 
 @interface ATArrayView () <UIScrollViewDelegate>
 
-- (void)updateItemViews:(BOOL)updateExisting;
+- (void)configureItems:(BOOL)updateExisting;
 - (void)configureItem:(UIView *)item forIndex:(NSInteger)index;
 - (void)recycleItem:(UIView *)item;
 
@@ -52,9 +52,9 @@
 
 
 #pragma mark -
-#pragma mark Data Changes
+#pragma mark Data
 
-- (void)reloadItems {
+- (void)reloadData {
 	_itemCount = [_delegate numberOfItemsInArrayView:self];
 
 	// recycle all items
@@ -63,12 +63,12 @@
 	}
 	[_visibleItems removeAllObjects];
 
-	[self updateItemViews:NO];
+	[self configureItems:NO];
 }
 
 
 #pragma mark -
-#pragma mark Item View Management
+#pragma mark Item Views
 
 - (UIView *)viewForItemAtIndex:(NSUInteger)index {
     for (UIView *item in _visibleItems)
@@ -77,13 +77,7 @@
     return nil;
 }
 
-- (void)configureItem:(UIView *)item forIndex:(NSInteger)index {
-    item.tag = index;
-    item.frame = [self rectForItemAtIndex:index];
-	[item setNeedsDisplay]; // just in case
-}
-
-- (void)updateItemViews:(BOOL)reconfigure {
+- (void)configureItems:(BOOL)reconfigure {
 	// update content size if needed
 	CGSize contentSize = CGSizeMake(self.bounds.size.width,
 									_itemSize.height * _rowCount + _rowGap * (_rowCount - 1) + _effectiveInsets.top + _effectiveInsets.bottom);
@@ -117,6 +111,12 @@
     }
 }
 
+- (void)configureItem:(UIView *)item forIndex:(NSInteger)index {
+    item.tag = index;
+    item.frame = [self rectForItemAtIndex:index];
+	[item setNeedsDisplay]; // just in case
+}
+
 
 #pragma mark -
 #pragma mark Layouting
@@ -146,7 +146,7 @@
 										_contentInsets.bottom + _rowGap,
 										_contentInsets.right + _colGap);
 
-	[self updateItemViews:boundsChanged];
+	[self configureItems:boundsChanged];
 }
 
 - (NSInteger)firstVisibleItemIndex {
@@ -192,7 +192,7 @@
 #pragma mark UIScrollViewDelegate methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-	[self updateItemViews:NO];
+	[self configureItems:NO];
 }
 
 @end
@@ -230,7 +230,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 	if (self.arrayView.itemCount == 0)
-		[self.arrayView reloadItems];
+		[self.arrayView reloadData];
 }
 
 

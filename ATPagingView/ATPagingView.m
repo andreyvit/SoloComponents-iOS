@@ -7,13 +7,13 @@
 
 @interface ATPagingView () <UIScrollViewDelegate>
 
-- (void)layoutPages;
-- (void)recycleAllPages;
-- (void)configureScrollView;
-- (void)reconfigurePageAtIndex:(NSInteger)index;
+- (void)configurePages;
 - (void)configurePage:(UIView *)page forIndex:(NSInteger)index;
+
 - (CGRect)frameForScrollView;
 - (CGRect)frameForPageAtIndex:(NSUInteger)index;
+
+- (void)recyclePage:(UIView *)page;
 
 @end
 
@@ -68,12 +68,29 @@
 
 - (void)setPagesToPreload:(NSInteger)value {
 	_pagesToPreload = value;
-	[self layoutPages];
+	[self configurePages];
 }
 
 
 #pragma mark -
-#pragma mark Accessing and Managing Pages
+#pragma mark Data
+
+- (void)reloadData {
+	_pageCount = [_delegate numberOfPagesInPagingView:self];
+
+	// recycle all pages
+	for (UIView *view in _visiblePages) {
+		[_recycledPages addObject:view];
+		[view removeFromSuperview];
+	}
+	[_visiblePages removeAllObjects];
+
+	[self configurePages];
+}
+
+
+#pragma mark -
+#pragma mark Page Views
 
 - (UIView *)viewForPageAtIndex:(NSUInteger)index {
     for (UIView *page in _visiblePages)
@@ -82,11 +99,55 @@
     return nil;
 }
 
-- (void)reloadPages {
-	_pageCount = [_delegate numberOfPagesInPagingView:self];
-	[self configureScrollView];
-	[self recycleAllPages];
-	[self layoutPages];
+- (void)configurePages {
+	if (_scrollView.frame.size.width == 0)
+		return;  // not our time yet
+
+	// normally layoutSubviews won't even call us, but protect against any other calls too (e.g. if someones does reloadPages)
+	if (_rotationInProgress)
+		return;
+
+	CGSize contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
+	if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)) {
+		_scrollView.contentSize = contentSize;
+	}
+
+    // calculate which pages are visible
+    int firstPage = self.firstVisiblePageIndex;
+    int lastPage  = self.lastVisiblePageIndex;
+
+    // recycle no longer visible pages
+    for (UIView *page in _visiblePages) {
+        if (page.tag < firstPage || page.tag > lastPage) {
+			[self recyclePage:page];
+        }
+    }
+    [_visiblePages minusSet:_recycledPages];
+
+    // add missing pages
+    for (int index = firstPage; index <= lastPage; index++) {
+        if ([self viewForPageAtIndex:index] == nil) {
+			UIView *page = [_delegate viewForPageInPagingView:self atIndex:index];
+            [self configurePage:page forIndex:index];
+            [_scrollView addSubview:page];
+            [_visiblePages addObject:page];
+        }
+    }
+
+    CGRect visibleBounds = _scrollView.bounds;
+	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
+	if (newPageIndex != _currentPageIndex) {
+		_currentPageIndex = newPageIndex;
+		if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
+			[_delegate currentPageDidChangeInPagingView:self];
+		NSLog(@"_currentPageIndex == %d", _currentPageIndex);
+	}
+}
+
+- (void)configurePage:(UIView *)page forIndex:(NSInteger)index {
+    page.tag = index;
+    page.frame = [self frameForPageAtIndex:index];
+	[page setNeedsDisplay]; // just in case
 }
 
 
@@ -99,8 +160,7 @@
 	// recycle non-current pages, otherwise they might show up during the rotation
 	for (UIView *view in _visiblePages)
 		if (view.tag != _currentPageIndex) {
-			[_recycledPages addObject:view];
-			[view removeFromSuperview];
+			[self recyclePage:view];
 		}
 	[_visiblePages minusSet:_recycledPages];
 
@@ -119,9 +179,6 @@
 }
 
 - (void)didRotate {
-	// update contentSize
-	[self configureScrollView];
-
 	// adjust frames according to the new page size - this does not cause any visible changes,
 	// because we move the pages and adjust contentOffset simultaneously
 	for (UIView *view in _visiblePages)
@@ -130,7 +187,7 @@
 
 	_rotationInProgress = NO;
 
-	[self layoutPages];
+	[self configurePages];
 }
 
 
@@ -154,67 +211,18 @@
 	} else if (oldFrame.size.height != _scrollView.frame.size.height) {
 		// some other height change (the initial change from 0 to some specific size,
 		// or maybe an in-call status bar has appeared or disappeared)
-		[self configureScrollView];
-		[self layoutPages];
+		[self configurePages];
 	}
 }
 
-- (void)layoutPages {
-	// normally layoutSubviews won't even call us, but protect against any other calls too (e.g. if someones calls reloadPages)
-	if (_rotationInProgress)
-		return;
-
-    // calculate which pages are visible
+- (NSInteger)firstVisiblePageIndex {
     CGRect visibleBounds = _scrollView.bounds;
-    int firstNeededPageIndex = floorf(CGRectGetMinX(visibleBounds) / CGRectGetWidth(visibleBounds));
-    int lastNeededPageIndex  = floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds));
-    firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
-    lastNeededPageIndex  = MIN(lastNeededPageIndex, _pageCount - 1);
-
-    // recycle no longer visible pages
-    for (UIView *page in _visiblePages) {
-        if (page.tag < firstNeededPageIndex || page.tag > lastNeededPageIndex) {
-            [_recycledPages addObject:page];
-            [page removeFromSuperview];
-        }
-    }
-    [_visiblePages minusSet:_recycledPages];
-
-    // add missing pages
-    for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
-        if ([self viewForPageAtIndex:index] == nil) {
-			UIView *page = [_delegate viewForPageInPagingView:self atIndex:index];
-            [self configurePage:page forIndex:index];
-            [_scrollView addSubview:page];
-            [_visiblePages addObject:page];
-        }
-    }
-
-	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
-	if (newPageIndex != _currentPageIndex) {
-		_currentPageIndex = newPageIndex;
-		if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
-			[_delegate currentPageDidChangeInPagingView:self];
-		NSLog(@"_currentPageIndex == %d", _currentPageIndex);
-	}
+	return MAX(floorf(CGRectGetMinX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0);
 }
 
-// should be called when the number of rows or the scroll view frame changes
-- (void)configureScrollView {
-	if (_scrollView.frame.size.width == 0)
-		return;  // not our time yet
-	_scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
-	//_scrollView.contentOffset = CGPointZero;
-}
-
-- (void)reconfigurePageAtIndex:(NSInteger)index {
-	[self configurePage:[self viewForPageAtIndex:index] forIndex:index];
-}
-
-- (void)configurePage:(UIView *)page forIndex:(NSInteger)index {
-    page.tag = index;
-    page.frame = [self frameForPageAtIndex:index];
-	[page setNeedsDisplay]; // just in case
+- (NSInteger)lastVisiblePageIndex {
+    CGRect visibleBounds = _scrollView.bounds;
+	return MIN(floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds)), _pageCount - 1);
 }
 
 - (CGRect)frameForScrollView {
@@ -222,6 +230,7 @@
 	return CGRectMake(-_gapBetweenPages/2, 0, size.width + _gapBetweenPages, size.height);
 }
 
+// not public because this is in scroll view coordinates
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
     CGFloat pageWidthWithGap = _scrollView.frame.size.width;
 	CGSize pageSize = self.bounds.size;
@@ -234,12 +243,11 @@
 #pragma mark -
 #pragma mark Recycling
 
-- (void)recycleAllPages {
-	for (UIView *view in _visiblePages) {
-		[_recycledPages addObject:view];
-		[view removeFromSuperview];
-	}
-	[_visiblePages removeAllObjects];
+// It's the caller's responsibility to remove this page from _visiblePages,
+// since this method is often called while traversing _visiblePages array.
+- (void)recyclePage:(UIView *)page {
+	[_recycledPages addObject:page];
+	[page removeFromSuperview];
 }
 
 - (UIView *)dequeueReusablePage {
@@ -257,7 +265,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 	if (_rotationInProgress)
 		return;
-	[self layoutPages];
+	[self configurePages];
 }
 
 @end
@@ -295,7 +303,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
 	if (self.pagingView.pageCount == 0)
-		[self.pagingView reloadPages];
+		[self.pagingView reloadData];
 }
 
 

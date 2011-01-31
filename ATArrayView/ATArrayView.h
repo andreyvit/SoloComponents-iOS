@@ -46,7 +46,7 @@
 
 @property(nonatomic, readonly) NSInteger lastVisibleItemIndex;
 
-- (void)reloadItems;  // must be called at least once to display something
+- (void)reloadData;  // must be called at least once to display something
 
 - (UIView *)viewForItemAtIndex:(NSUInteger)index;  // nil if not loaded
 

@@ -34,7 +34,10 @@
 
 @property(nonatomic, assign, readonly) NSInteger currentPageIndex;
 
-- (void)reloadPages;  // must be called at least once to display something
+@property(nonatomic, assign, readonly) NSInteger firstVisiblePageIndex;
+@property(nonatomic, assign, readonly) NSInteger lastVisiblePageIndex;
+
+- (void)reloadData;  // must be called at least once to display something
 
 - (UIView *)viewForPageAtIndex:(NSUInteger)index;  // nil if not loaded
 

@@ -39,14 +39,14 @@ ATPagingViewController is similar to UITableViewController and:
 
 * defines `loadView` to create ATPagingView automatically,
 * sets itself as a delegate of ATPagingView,
-* calls `reloadPages` in `viewWillAppear:` if the paging view is empty,
+* calls `reloadData` in `viewWillAppear:` if the paging view is empty,
 * additionally it forwards orientation events to the paging view (see below).
 
 If you want to use ATPagingView without ATPagingViewController, you
 need to:
 
 * provide your delegate object using the `delegate` property,
-* call `reloadPages` to populate the view,
+* call `reloadData` to populate the view,
 * if you want to support rotation, you need to invoke
   `willAnimateRotation` and `didRotate` methods from your view
   controller:
@@ -86,4 +86,4 @@ it:
 
 * overrides `loadView` to create ATArrayView automatically,
 * sets itself as a delegate of the array view,
-* calls `reloadItems` in `viewWillAppear:` if the array view is empty.
+* calls `reloadData` in `viewWillAppear:` if the array view is empty.
