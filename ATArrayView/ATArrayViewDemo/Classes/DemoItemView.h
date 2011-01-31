@@ -3,10 +3,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATArrayView.h"
 
 
-@interface DemoViewController : ATArrayViewController {
+@interface DemoItemView : UIView {
 
 }
 

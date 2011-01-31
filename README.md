@@ -58,3 +58,32 @@ need to:
       - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
       	[self.pagingView didRotate];
       }
+
+
+ATArrayView
+-----------
+
+A container that arranges its items in rows and columns similar to the
+thumbnails screen in Photos.app, the API is modeled after UITableView.
+
+Enjoy the familiar delegate methods:
+
+    - (NSInteger)numberOfItemsInArrayView:(ATArrayView *)arrayView {
+    	return 97;
+    }
+
+    - (UIView *)viewForItemInArrayView:(ATArrayView *)arrayView atIndex:(NSInteger)index {
+    	DemoItemView *itemView = (DemoItemView *) [arrayView dequeueReusableItem];
+    	if (itemView == nil) {
+    		itemView = [[[DemoItemView alloc] init] autorelease];
+    	}
+    	return itemView;
+    }
+
+There's ATArrayViewController which further reduces the amount of
+boilerplate code you have to write. Similar to UITableViewController,
+it:
+
+* overrides `loadView` to create ATArrayView automatically,
+* sets itself as a delegate of the array view,
+* calls `reloadItems` in `viewWillAppear:` if the array view is empty.

@@ -14,6 +14,9 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		4383D72612F718F200E97321 /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4383D72512F718F100E97321 /* DemoViewController.m */; };
+		4383D75312F71B3900E97321 /* ATArrayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4383D75212F71B3900E97321 /* ATArrayView.m */; };
+		43A4381712F71DA1003884B3 /* DemoItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43A4381612F71DA1003884B3 /* DemoItemView.m */; };
+		43A4382512F71E3A003884B3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43A4382412F71E3A003884B3 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,11 @@
 		32CA4F630368D1EE00C91783 /* ATArrayViewDemo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATArrayViewDemo_Prefix.pch; sourceTree = "<group>"; };
 		4383D72412F718F100E97321 /* DemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
 		4383D72512F718F100E97321 /* DemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoViewController.m; sourceTree = "<group>"; };
+		4383D75112F71B3900E97321 /* ATArrayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATArrayView.h; path = ../ATArrayView.h; sourceTree = SOURCE_ROOT; };
+		4383D75212F71B3900E97321 /* ATArrayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ATArrayView.m; path = ../ATArrayView.m; sourceTree = SOURCE_ROOT; };
+		43A4381512F71DA1003884B3 /* DemoItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoItemView.h; sourceTree = "<group>"; };
+		43A4381612F71DA1003884B3 /* DemoItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoItemView.m; sourceTree = "<group>"; };
+		43A4382412F71E3A003884B3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* ATArrayViewDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ATArrayViewDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,6 +47,7 @@
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
+				43A4382512F71E3A003884B3 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +61,8 @@
 				1D3623250D0F684500981E51 /* ATArrayViewDemoAppDelegate.m */,
 				4383D72412F718F100E97321 /* DemoViewController.h */,
 				4383D72512F718F100E97321 /* DemoViewController.m */,
+				43A4381512F71DA1003884B3 /* DemoItemView.h */,
+				43A4381612F71DA1003884B3 /* DemoItemView.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -67,11 +78,13 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				4383D74F12F71B1400E97321 /* ATArrayView */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				43A4382412F71E3A003884B3 /* QuartzCore.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -102,6 +115,15 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4383D74F12F71B1400E97321 /* ATArrayView */ = {
+			isa = PBXGroup;
+			children = (
+				4383D75112F71B3900E97321 /* ATArrayView.h */,
+				4383D75212F71B3900E97321 /* ATArrayView.m */,
+			);
+			name = ATArrayView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +189,8 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* ATArrayViewDemoAppDelegate.m in Sources */,
 				4383D72612F718F200E97321 /* DemoViewController.m in Sources */,
+				4383D75312F71B3900E97321 /* ATArrayView.m in Sources */,
+				43A4381712F71DA1003884B3 /* DemoItemView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
