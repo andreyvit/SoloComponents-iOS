@@ -12,6 +12,13 @@
     return YES;
 }
 
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+		self.arrayView.itemSize = CGSizeMake(150, 150);
+	}
+}
+
 
 #pragma mark -
 #pragma mark ATArrayViewDelegate methods

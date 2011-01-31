@@ -29,6 +29,7 @@
 	NSInteger       _rowCount;
 	CGFloat         _rowGap;
 	CGFloat         _colGap;
+	UIEdgeInsets    _effectiveInsets;
 }
 
 @property(nonatomic, assign) id<ATArrayViewDelegate> delegate;

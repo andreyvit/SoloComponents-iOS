@@ -9,6 +9,7 @@
 
 - (void)updateItemViews:(BOOL)updateExisting;
 - (void)configureItem:(UIView *)item forIndex:(NSInteger)index;
+- (void)recycleItem:(UIView *)item;
 
 @end
 
@@ -32,7 +33,6 @@
 		_recycledItems = [[NSMutableSet alloc] init];
 
 		_itemSize = CGSizeMake(70, 70);
-		_contentInsets = UIEdgeInsetsMake(8, 8, 8, 8);
 		_minimumColumnGap = 5;
 
 		_scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
@@ -59,8 +59,7 @@
 
 	// recycle all items
 	for (UIView *view in _visibleItems) {
-		[_recycledItems addObject:view];
-		[view removeFromSuperview];
+		[self recycleItem:view];
 	}
 	[_visibleItems removeAllObjects];
 
@@ -87,7 +86,7 @@
 - (void)updateItemViews:(BOOL)reconfigure {
 	// update content size if needed
 	CGSize contentSize = CGSizeMake(self.bounds.size.width,
-									_itemSize.height * _rowCount + _rowGap * (_rowCount - 1) + _contentInsets.top + _contentInsets.bottom);
+									_itemSize.height * _rowCount + _rowGap * (_rowCount - 1) + _effectiveInsets.top + _effectiveInsets.bottom);
 	if (_scrollView.contentSize.width != contentSize.width || _scrollView.contentSize.height != contentSize.height) {
 		_scrollView.contentSize = contentSize;
 	}
@@ -99,8 +98,7 @@
     // recycle items that are no longer visible
     for (UIView *item in _visibleItems) {
         if (item.tag < firstItem || item.tag > lastItem) {
-            [_recycledItems addObject:item];
-            [item removeFromSuperview];
+			[self recycleItem:item];
         }
     }
     [_visibleItems minusSet:_recycledItems];
@@ -131,7 +129,7 @@
 	_colCount = floorf((self.bounds.size.width - _contentInsets.left - _contentInsets.right) / _itemSize.width);
 
 	while (1) {
-		_colGap = (self.bounds.size.width - _contentInsets.left - _contentInsets.right - _itemSize.width * _colCount) / (_colCount - 1);
+		_colGap = (self.bounds.size.width - _contentInsets.left - _contentInsets.right - _itemSize.width * _colCount) / (_colCount + 1);
 		if (_colGap >= _minimumColumnGap)
 			break;
 		--_colCount;
@@ -140,16 +138,21 @@
 	_rowCount = (_itemCount + _colCount - 1) / _colCount;
 	_rowGap = _colGap;
 
+	_effectiveInsets = UIEdgeInsetsMake(_contentInsets.top + _rowGap,
+										_contentInsets.left + _colGap,
+										_contentInsets.bottom + _rowGap,
+										_contentInsets.right + _colGap);
+
 	[self updateItemViews:boundsChanged];
 }
 
 - (NSInteger)firstVisibleItemIndex {
-    int firstRow = MAX(floorf((CGRectGetMinY(_scrollView.bounds) - _contentInsets.top) / (_itemSize.height + _rowGap)), 0);
+    int firstRow = MAX(floorf((CGRectGetMinY(_scrollView.bounds) - _effectiveInsets.top) / (_itemSize.height + _rowGap)), 0);
 	return MIN(firstRow * _colCount, _itemCount - 1);
 }
 
 - (NSInteger)lastVisibleItemIndex {
-    int lastRow = MIN( ceilf((CGRectGetMaxY(_scrollView.bounds) - _contentInsets.top) / (_itemSize.height + _rowGap)), _rowCount - 1);
+    int lastRow = MIN( ceilf((CGRectGetMaxY(_scrollView.bounds) - _effectiveInsets.top) / (_itemSize.height + _rowGap)), _rowCount - 1);
 	return MIN((lastRow + 1) * _colCount - 1, _itemCount - 1);
 }
 
@@ -157,14 +160,21 @@
 	NSInteger row = index / _colCount;
 	NSInteger col = index % _colCount;
 
-    return CGRectMake(_contentInsets.left + (_itemSize.width  + _colGap) * col,
-					  _contentInsets.top  + (_itemSize.height + _rowGap) * row,
+    return CGRectMake(_effectiveInsets.left + (_itemSize.width  + _colGap) * col,
+					  _effectiveInsets.top  + (_itemSize.height + _rowGap) * row,
 					  _itemSize.width, _itemSize.height);
 }
 
 
 #pragma mark -
 #pragma mark Recycling
+
+// It's the caller's responsibility to remove this item from _visibleItems,
+// since this method is often called while traversing _visibleItems array.
+- (void)recycleItem:(UIView *)item {
+	[_recycledItems addObject:item];
+	[item removeFromSuperview];
+}
 
 - (UIView *)dequeueReusableItem {
 	UIView *result = [_recycledItems anyObject];
