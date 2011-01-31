@@ -142,7 +142,12 @@
 		return;
 
 	CGRect oldFrame = _scrollView.frame;
-	_scrollView.frame = [self frameForScrollView];
+	CGRect newFrame = [self frameForScrollView];
+	if (!CGRectEqualToRect(oldFrame, newFrame)) {
+		// Strangely enough, if we do this assignment every time without the above
+		// check, bouncing will behave incorrectly.
+		_scrollView.frame = newFrame;
+	}
 
 	if (oldFrame.size.width != 0 && _scrollView.frame.size.width != oldFrame.size.width) {
 		// rotation is in progress, don't do any adjustments just yet

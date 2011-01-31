@@ -123,8 +123,11 @@
 
 - (void)layoutSubviews {
 	BOOL boundsChanged = !CGRectEqualToRect(_scrollView.frame, self.bounds);
-	if (boundsChanged)
+	if (boundsChanged) {
+		// Strangely enough, if we do this assignment every time without the above
+		// check, bouncing will behave incorrectly.
 		_scrollView.frame = self.bounds;
+	}
 
 	_colCount = floorf((self.bounds.size.width - _contentInsets.left - _contentInsets.right) / _itemSize.width);
 
