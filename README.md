@@ -19,6 +19,8 @@ ATPagingView
 ATPagingView is a wrapper around UIScrollView in (horizontal) paging
 mode, with an API similar to UITableView.
 
+Status: beta. Based on code that was in use by App Store apps.
+
 You provide the page views by implementing two delegate methods:
 
     - (NSInteger)numberOfPagesInPagingView:(ATPagingView *)pagingView {
@@ -72,6 +74,8 @@ ATArrayView
 
 A container that arranges its items in rows and columns similar to the
 thumbnails screen in Photos.app, the API is modeled after UITableView.
+
+Status: beta.
 
 Enjoy the familiar delegate methods:
 
