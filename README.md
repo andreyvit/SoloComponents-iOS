@@ -5,6 +5,13 @@ Two-file (.h / .m) useful components and utility classes that are dead-easy to d
 
 License: MIT (free for any use, no attribution required).
 
+Follow us on twitter: [@SoloComponents](http://twitter.com/SoloComponents/).
+
+Note: I want to collect as many open-source components as possible,
+not just publish my own ones. If you have a useful iOS class that does
+not depend on anything, feel free to fork, add and send me a pull
+request!
+
 
 ATPagingView
 ------------
