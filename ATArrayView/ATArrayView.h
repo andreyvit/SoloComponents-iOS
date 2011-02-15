@@ -40,6 +40,8 @@
 
 @property(nonatomic, assign) CGFloat minimumColumnGap;
 
+@property(nonatomic, readonly) UIScrollView *scrollView;
+
 @property(nonatomic, readonly) NSInteger itemCount;
 
 @property(nonatomic, readonly) NSInteger firstVisibleItemIndex;

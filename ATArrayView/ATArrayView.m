@@ -21,6 +21,7 @@
 @synthesize itemSize=_itemSize;
 @synthesize contentInsets=_contentInsets;
 @synthesize minimumColumnGap=_minimumColumnGap;
+@synthesize scrollView=_scrollView;
 @synthesize itemCount=_itemCount;
 
 
