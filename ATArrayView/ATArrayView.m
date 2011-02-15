@@ -98,6 +98,9 @@
     }
     [_visibleItems minusSet:_recycledItems];
 
+	if (lastItem < 0)
+		return;
+
     // add missing items
     for (int index = firstItem; index <= lastItem; index++) {
 		UIView *item = [self viewForItemAtIndex:index];
