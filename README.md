@@ -87,3 +87,60 @@ it:
 * overrides `loadView` to create ATArrayView automatically,
 * sets itself as a delegate of the array view,
 * calls `reloadData` in `viewWillAppear:` if the array view is empty.
+
+
+ATByteImage
+-----------
+
+Allows to easily use an image (CGImageRef) backed by a malloc'ed chunk
+of memory. This means you can read or manipulate image bytes directly.
+
+Status: ready for production use.
+
+Using ATByteImage:
+
+    ATByteImage *blurred = [[ATByteImage alloc] initWithSize:blurredSize];
+    [blurred clear];
+
+    ATByteImageContext *blurredContext = [blurred newContext];
+    CGContextSetBlendMode(blurredContext.CGContext, kCGBlendModeNormal);
+    ... draw using blurredContext.CGContext ...
+    [blurredContext release];
+
+  	UIImage *myOverlay = [blurred extractImage];
+
+Here's another example. The following function is useful in background
+image loading code:
+
+    // Returns an uncompressed (decoded) UIImage, optimized for drawing speed.
+    //
+    // This is a middle ground between [UIImage imageNamed:] and a plain
+    // [UIImage imageWithContentsOfFile:], as follows:
+    //
+    // * [UIImage imageWithContentsOfFile:] loads image data from disk and
+    //   decodes it each time you display the image.
+    //
+    //   If you are using CATiledLayer to display a large image (and you should,
+    //   since UIImageView is not recommended for images bigger than ~1024x1024),
+    //   the whole JPEG will decoded for EACH tile you display.
+    //
+    // * [UIImage imageNamed:@"xxx"] only ever decodes the image once, just as you
+    //   wanted. However it also caches the image and seems to sometimes (always?)
+    //   not release the data even after you release your UIImage.
+    //
+    //   An app that loads several large images via 'imageNamed' will thus crash
+    //   quite soon with unfamous "error 0".
+    //
+    //   Another undesired quality of 'imageNamed' is that the image is loaded and
+    //   decoded when it is displayed for the first time, which means you can't
+    //   really do the decoding in a background thread.
+    //
+    // * DecompressUIImage([UIImage imageWithContentsOfFile:@"xx.jpg"]) is the
+    //   sweet spot between the two — it returns a fully decoded image which can
+    //   be displayed quickly, and memory management is entirely up to you.
+    //
+    UIImage *DecompressUIImage(UIImage *image) {
+    	ATByteImage *byteImage = [[[ATByteImage alloc] initWithImage:image] autorelease];
+    	return [byteImage extractImage];
+    }
+
