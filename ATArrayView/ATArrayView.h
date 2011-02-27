@@ -77,8 +77,7 @@ This allows for smoother scrolling and minimizing 'jerkyness' when loading netwo
 @end
 
 
-@interface ATArrayViewController : UIViewController <ATArrayViewDelegate> {
-}
+@interface ATArrayViewController : UIViewController <ATArrayViewDelegate>
 
 @property(nonatomic, readonly) ATArrayView *arrayView;
 
