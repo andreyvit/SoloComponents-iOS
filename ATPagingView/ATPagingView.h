@@ -72,8 +72,7 @@
 @end
 
 
-@interface ATPagingViewController : UIViewController <ATPagingViewDelegate> {
-}
+@interface ATPagingViewController : UIViewController <ATPagingViewDelegate>
 
 @property(nonatomic, readonly) ATPagingView *pagingView;
 
