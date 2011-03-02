@@ -115,9 +115,12 @@
 		_scrollView.contentSize = contentSize;
 	}
 
+    CGRect visibleBounds = _scrollView.bounds;
+	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
+
     // calculate which pages are visible
-    int firstPage = self.firstVisiblePageIndex;
-    int lastPage  = self.lastVisiblePageIndex;
+    int firstPage = MAX(0, MIN(self.firstVisiblePageIndex, newPageIndex - _pagesToPreload));
+    int lastPage  = MIN(_pageCount-1, MAX(self.lastVisiblePageIndex, newPageIndex + _pagesToPreload));
 
     // recycle no longer visible pages
     for (UIView *page in _visiblePages) {
@@ -137,13 +140,28 @@
         }
     }
 
-    CGRect visibleBounds = _scrollView.bounds;
-	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
-	if (newPageIndex != _currentPageIndex) {
+	// update loaded pages info
+	BOOL loadedPagesChanged = (_firstLoadedPageIndex != firstPage || _lastLoadedPageIndex != lastPage);
+	if (loadedPagesChanged) {
+		_firstLoadedPageIndex = firstPage;
+		_lastLoadedPageIndex  = lastPage;
+		NSLog(@"loadedPagesChanged: first == %d, last == %d", _firstLoadedPageIndex, _lastLoadedPageIndex);
+	}
+
+	// update current page index
+	BOOL pageIndexChanged = (newPageIndex != _currentPageIndex);
+	if (pageIndexChanged) {
 		_currentPageIndex = newPageIndex;
 		if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
 			[_delegate currentPageDidChangeInPagingView:self];
 		NSLog(@"_currentPageIndex == %d", _currentPageIndex);
+	}
+
+	if (loadedPagesChanged || pageIndexChanged) {
+		if ([_delegate respondsToSelector:@selector(pagesDidChangeInPagingView:)]) {
+			NSLog(@"pagesDidChangeInPagingView");
+			[_delegate pagesDidChangeInPagingView:self];
+		}
 	}
 }
 
@@ -236,6 +254,14 @@
 - (NSInteger)lastVisiblePageIndex {
     CGRect visibleBounds = _scrollView.bounds;
 	return MIN(floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds)), _pageCount - 1);
+}
+
+- (NSInteger)firstLoadedPageIndex {
+	return _firstLoadedPageIndex;
+}
+
+- (NSInteger)lastLoadedPageIndex {
+	return _lastLoadedPageIndex;
 }
 
 - (CGRect)frameForScrollView {

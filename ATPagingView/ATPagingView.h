@@ -19,6 +19,8 @@
 	// state
 	NSInteger _pageCount;
 	NSInteger _currentPageIndex;
+	NSInteger _firstLoadedPageIndex;
+	NSInteger _lastLoadedPageIndex;
 	NSMutableSet *_recycledPages;
 	NSMutableSet *_visiblePages;
 	BOOL _rotationInProgress;
@@ -36,6 +38,9 @@
 
 @property(nonatomic, assign, readonly) NSInteger firstVisiblePageIndex;
 @property(nonatomic, assign, readonly) NSInteger lastVisiblePageIndex;
+
+@property(nonatomic, assign, readonly) NSInteger firstLoadedPageIndex;
+@property(nonatomic, assign, readonly) NSInteger lastLoadedPageIndex;
 
 - (void)reloadData;  // must be called at least once to display something
 
@@ -61,6 +66,8 @@
 @optional
 
 - (void)currentPageDidChangeInPagingView:(ATPagingView *)pagingView;
+
+- (void)pagesDidChangeInPagingView:(ATPagingView *)pagingView;
 
 @end
 
