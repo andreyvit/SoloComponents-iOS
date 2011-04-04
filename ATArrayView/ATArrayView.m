@@ -6,7 +6,7 @@
 
 
 @interface ATArrayView () <UIScrollViewDelegate>
-
+- (void)setup;
 - (void)configureItems:(BOOL)updateExisting;
 - (void)configureItem:(UIView *)item forIndex:(NSInteger)index;
 - (void)recycleItem:(UIView *)item;
@@ -29,21 +29,31 @@
 #pragma mark init/dealloc
 
 - (id)initWithFrame:(CGRect)frame {
-	if (self = [super initWithFrame:frame]) {
-		_visibleItems = [[NSMutableSet alloc] init];
-		_recycledItems = [[NSMutableSet alloc] init];
-
-		_itemSize = CGSizeMake(70, 70);
-		_minimumColumnGap = 5;
-
-		_scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
-		_scrollView.showsVerticalScrollIndicator = YES;
-		_scrollView.showsHorizontalScrollIndicator = NO;
-		_scrollView.bounces = YES;
-		_scrollView.delegate = self;
-		[self addSubview:_scrollView];
+	if ((self = [super initWithFrame:frame])) {
+        [self setup];
 	}
 	return self;
+}
+
+- (void) awakeFromNib {
+    [self setup];
+}
+
+/* Moving setup here, allows for ATArrayView to work with InterfaceBuilder since
+awakeFromNib is called instead of initWithFrame */
+-(void) setup {
+    _visibleItems = [[NSMutableSet alloc] init];
+    _recycledItems = [[NSMutableSet alloc] init];
+    
+    _itemSize = CGSizeMake(70, 70);
+    _minimumColumnGap = 5;
+    
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    _scrollView.showsVerticalScrollIndicator = YES;
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.bounces = YES;
+    _scrollView.delegate = self;
+    [self addSubview:_scrollView];
 }
 
 - (void)dealloc {
