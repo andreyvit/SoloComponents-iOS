@@ -18,7 +18,7 @@
 	UIEdgeInsets    _contentInsets;
 	CGSize          _itemSize;
 	CGFloat         _minimumColumnGap;
-
+    int             _preloadBuffer;
 	// state
 	NSInteger       _itemCount;
 	NSMutableSet   *_recycledItems;
@@ -32,7 +32,14 @@
 	UIEdgeInsets    _effectiveInsets;
 }
 
-@property(nonatomic, assign) id<ATArrayViewDelegate> delegate;
+/* Depending on memory, I you can use the preload buffer to buffer additional rows that
+should be rendered. This is useful if we are usign CATiledLayer as the layerClass of the
+UIView that will be used in the grid because CATiledLayer drawRect happens in the background. Doing this will
+prevent a previous reusable "grid" cell to not show the content of previous cell while we continue to render the new cell's content.
+This allows for smoother scrolling and minimizing 'jerkyness' when loading network resources in cells at the tradeoff of memory.
+ */
+@property(nonatomic,assign) int preloadBuffer;
+@property(nonatomic, assign) IBOutlet id<ATArrayViewDelegate> delegate;
 
 @property(nonatomic, assign) UIEdgeInsets contentInsets;
 
