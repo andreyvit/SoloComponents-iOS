@@ -11,7 +11,7 @@
 
 
 - (id)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
+    if ((self = [super initWithFrame:frame])) {
 		self.layer.cornerRadius = 8;
 		self.layer.borderColor = [[UIColor redColor] CGColor];
 		self.layer.borderWidth = 1;
