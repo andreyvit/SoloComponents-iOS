@@ -23,7 +23,7 @@
 @synthesize minimumColumnGap=_minimumColumnGap;
 @synthesize scrollView=_scrollView;
 @synthesize itemCount=_itemCount;
-
+@synthesize preloadBuffer=_preloadBuffer;
 
 #pragma mark -
 #pragma mark init/dealloc
@@ -47,7 +47,7 @@ awakeFromNib is called instead of initWithFrame */
     
     _itemSize = CGSizeMake(70, 70);
     _minimumColumnGap = 5;
-    
+    _preloadBuffer = 0;
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
     _scrollView.showsVerticalScrollIndicator = YES;
     _scrollView.showsHorizontalScrollIndicator = NO;
@@ -165,12 +165,15 @@ awakeFromNib is called instead of initWithFrame */
 
 - (NSInteger)firstVisibleItemIndex {
     int firstRow = MAX(floorf((CGRectGetMinY(_scrollView.bounds) - _effectiveInsets.top) / (_itemSize.height + _rowGap)), 0);
-	return MIN(firstRow * _colCount, _itemCount - 1);
+	//return MIN( firstRow * _colCount, _itemCount - 1);
+	//Formula changed to incorporate the 'preload' buffer functionality
+	return MIN( MAX(0,firstRow - (_preloadBuffer)) * _colCount, _itemCount - 1);
 }
 
 - (NSInteger)lastVisibleItemIndex {
     int lastRow = MIN( ceilf((CGRectGetMaxY(_scrollView.bounds) - _effectiveInsets.top) / (_itemSize.height + _rowGap)), _rowCount - 1);
-	return MIN((lastRow + 1) * _colCount - 1, _itemCount - 1);
+	//return MIN((lastRow + 1) * _colCount - 1, _itemCount - 1);
+    return MIN((lastRow + (_preloadBuffer + 1)) * _colCount - 1, _itemCount - 1);
 }
 
 - (CGRect)rectForItemAtIndex:(NSUInteger)index {
