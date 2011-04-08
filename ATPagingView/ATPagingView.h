@@ -8,24 +8,24 @@
 
 // a wrapper around UIScrollView in (horizontal) paging mode, with an API similar to UITableView
 @interface ATPagingView : UIView {
-	// subviews
-	UIScrollView *_scrollView;
+    // subviews
+    UIScrollView *_scrollView;
 
-	// properties
-	id<ATPagingViewDelegate> _delegate;
-	CGFloat _gapBetweenPages;
-	NSInteger _pagesToPreload;
+    // properties
+    id<ATPagingViewDelegate> _delegate;
+    CGFloat _gapBetweenPages;
+    NSInteger _pagesToPreload;
 
-	// state
-	NSInteger _pageCount;
-	NSInteger _currentPageIndex;
-	NSInteger _firstLoadedPageIndex;
-	NSInteger _lastLoadedPageIndex;
-	NSMutableSet *_recycledPages;
-	NSMutableSet *_visiblePages;
+    // state
+    NSInteger _pageCount;
+    NSInteger _currentPageIndex;
+    NSInteger _firstLoadedPageIndex;
+    NSInteger _lastLoadedPageIndex;
+    NSMutableSet *_recycledPages;
+    NSMutableSet *_visiblePages;
 
-	BOOL _rotationInProgress;
-	BOOL _scrollViewIsMoving;
+    BOOL _rotationInProgress;
+    BOOL _scrollViewIsMoving;
 }
 
 @property(nonatomic, assign) id<ATPagingViewDelegate> delegate;

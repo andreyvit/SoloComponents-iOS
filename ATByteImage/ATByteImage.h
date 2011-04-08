@@ -9,12 +9,12 @@
 @interface ATByteImage : NSObject {
     NSUInteger width;
     NSUInteger height;
-	NSUInteger byteCount;
-	NSUInteger bytesPerPixel;
-	NSUInteger bytesPerRow;
-	NSUInteger bitsPerComponent;
-	unsigned char *bytes;
-	CGColorSpaceRef colorSpace;
+    NSUInteger byteCount;
+    NSUInteger bytesPerPixel;
+    NSUInteger bytesPerRow;
+    NSUInteger bitsPerComponent;
+    unsigned char *bytes;
+    CGColorSpaceRef colorSpace;
 }
 
 -(id)initWithSize:(CGSize)size;
@@ -52,8 +52,8 @@
 
 
 @interface ATByteImageContext : NSObject {
-	ATByteImage *image;
-	CGContextRef context;
+    ATByteImage *image;
+    CGContextRef context;
 }
 
 -(id)initWithByteImage:(ATByteImage *)anImage;

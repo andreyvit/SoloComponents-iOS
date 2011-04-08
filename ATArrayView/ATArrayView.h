@@ -9,27 +9,27 @@
 // A container that arranges its items in rows and columns similar to the
 // thumbnails screen in Photos.app, the API is modeled after UITableView.
 @interface ATArrayView : UIView {
-	// subviews
-	UIScrollView *_scrollView;
+    // subviews
+    UIScrollView *_scrollView;
 
-	// properties
-	id<ATArrayViewDelegate> _delegate;
+    // properties
+    id<ATArrayViewDelegate> _delegate;
 
-	UIEdgeInsets    _contentInsets;
-	CGSize          _itemSize;
-	CGFloat         _minimumColumnGap;
+    UIEdgeInsets    _contentInsets;
+    CGSize          _itemSize;
+    CGFloat         _minimumColumnGap;
     int             _preloadBuffer;
-	// state
-	NSInteger       _itemCount;
-	NSMutableSet   *_recycledItems;
-	NSMutableSet   *_visibleItems;
+    // state
+    NSInteger       _itemCount;
+    NSMutableSet   *_recycledItems;
+    NSMutableSet   *_visibleItems;
 
-	// geometry
-	NSInteger       _colCount;
-	NSInteger       _rowCount;
-	CGFloat         _rowGap;
-	CGFloat         _colGap;
-	UIEdgeInsets    _effectiveInsets;
+    // geometry
+    NSInteger       _colCount;
+    NSInteger       _rowCount;
+    CGFloat         _rowGap;
+    CGFloat         _colGap;
+    UIEdgeInsets    _effectiveInsets;
 }
 
 /* Depending on memory, I you can use the preload buffer to buffer additional rows that

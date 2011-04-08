@@ -6,7 +6,7 @@
 
 @interface ATPagingViewDemoAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
-	UINavigationController *navigationController;
+    UINavigationController *navigationController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

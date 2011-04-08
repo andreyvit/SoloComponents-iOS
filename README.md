@@ -24,21 +24,21 @@ Status: beta. Based on code that was in use by App Store apps.
 You provide the page views by implementing two delegate methods:
 
     - (NSInteger)numberOfPagesInPagingView:(ATPagingView *)pagingView {
-    	return 10;
+        return 10;
     }
 
     - (UIView *)viewForPageInPagingView:(ATPagingView *)pagingView atIndex:(NSInteger)index {
-    	UIView *view = [pagingView dequeueReusablePage];
-    	if (view == nil) {
-    		view = [[[DemoPageView alloc] init] autorelease];
-    	}
-    	return view;
+        UIView *view = [pagingView dequeueReusablePage];
+        if (view == nil) {
+            view = [[[DemoPageView alloc] init] autorelease];
+        }
+        return view;
     }
 
 You are also notified when the user navigates between pages:
 
     - (void)currentPageDidChangeInPagingView:(ATPagingView *)pagingView {
-    	self.navigationItem.title = [NSString stringWithFormat:@"%d of %d", pagingView.currentPageIndex+1, pagingView.pageCount];
+        self.navigationItem.title = [NSString stringWithFormat:@"%d of %d", pagingView.currentPageIndex+1, pagingView.pageCount];
     }
 
 You can use ATPagingView directly or derive your view controller from
@@ -61,11 +61,11 @@ need to:
   controller:
 
       - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-      	[self.pagingView willAnimateRotation];
+          [self.pagingView willAnimateRotation];
       }
 
       - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-      	[self.pagingView didRotate];
+          [self.pagingView didRotate];
       }
 
 
@@ -80,15 +80,15 @@ Status: beta.
 Enjoy the familiar delegate methods:
 
     - (NSInteger)numberOfItemsInArrayView:(ATArrayView *)arrayView {
-    	return 97;
+        return 97;
     }
 
     - (UIView *)viewForItemInArrayView:(ATArrayView *)arrayView atIndex:(NSInteger)index {
-    	DemoItemView *itemView = (DemoItemView *) [arrayView dequeueReusableItem];
-    	if (itemView == nil) {
-    		itemView = [[[DemoItemView alloc] init] autorelease];
-    	}
-    	return itemView;
+        DemoItemView *itemView = (DemoItemView *) [arrayView dequeueReusableItem];
+        if (itemView == nil) {
+            itemView = [[[DemoItemView alloc] init] autorelease];
+        }
+        return itemView;
     }
 
 There's ATArrayViewController which further reduces the amount of
@@ -118,7 +118,7 @@ Using ATByteImage:
     ... draw using blurredContext.CGContext ...
     [blurredContext release];
 
-  	UIImage *myOverlay = [blurred extractImage];
+      UIImage *myOverlay = [blurred extractImage];
 
 Here's another example. The following function is useful in background
 image loading code:
@@ -151,7 +151,7 @@ image loading code:
     //   be displayed quickly, and memory management is entirely up to you.
     //
     UIImage *DecompressUIImage(UIImage *image) {
-    	ATByteImage *byteImage = [[[ATByteImage alloc] initWithImage:image] autorelease];
-    	return [byteImage extractImage];
+        ATByteImage *byteImage = [[[ATByteImage alloc] initWithImage:image] autorelease];
+        return [byteImage extractImage];
     }
 
