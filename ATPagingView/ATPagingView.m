@@ -15,6 +15,9 @@
 
 - (void)recyclePage:(UIView *)page;
 
+- (void)knownToBeMoving;
+- (void)knownToBeIdle;
+
 @end
 
 
@@ -26,6 +29,7 @@
 @synthesize pagesToPreload=_pagesToPreload;
 @synthesize pageCount=_pageCount;
 @synthesize currentPageIndex=_currentPageIndex;
+@synthesize moving=_scrollViewIsMoving;
 
 
 #pragma mark -
@@ -308,6 +312,42 @@
 	if (_rotationInProgress)
 		return;
 	[self configurePages];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+	[self knownToBeMoving];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+	if (!decelerate) {
+		[self knownToBeIdle];
+	}
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+	[self knownToBeIdle];
+}
+
+
+#pragma mark -
+#pragma mark Busy/Idle tracking
+
+- (void)knownToBeMoving {
+	if (!_scrollViewIsMoving) {
+		_scrollViewIsMoving = YES;
+		if ([_delegate respondsToSelector:@selector(pagingViewWillBeginMoving:)]) {
+			[_delegate pagingViewWillBeginMoving:self];
+		}
+	}
+}
+
+- (void)knownToBeIdle {
+	if (_scrollViewIsMoving) {
+		_scrollViewIsMoving = NO;
+		if ([_delegate respondsToSelector:@selector(pagingViewDidEndMoving:)]) {
+			[_delegate pagingViewDidEndMoving:self];
+		}
+	}
 }
 
 @end

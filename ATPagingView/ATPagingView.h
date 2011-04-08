@@ -23,7 +23,9 @@
 	NSInteger _lastLoadedPageIndex;
 	NSMutableSet *_recycledPages;
 	NSMutableSet *_visiblePages;
+
 	BOOL _rotationInProgress;
+	BOOL _scrollViewIsMoving;
 }
 
 @property(nonatomic, assign) id<ATPagingViewDelegate> delegate;
@@ -41,6 +43,8 @@
 
 @property(nonatomic, assign, readonly) NSInteger firstLoadedPageIndex;
 @property(nonatomic, assign, readonly) NSInteger lastLoadedPageIndex;
+
+@property(nonatomic, assign, readonly) BOOL moving;
 
 - (void)reloadData;  // must be called at least once to display something
 
@@ -68,6 +72,10 @@
 - (void)currentPageDidChangeInPagingView:(ATPagingView *)pagingView;
 
 - (void)pagesDidChangeInPagingView:(ATPagingView *)pagingView;
+
+// a good place to start and stop background processing
+- (void)pagingViewWillBeginMoving:(ATPagingView *)pagingView;
+- (void)pagingViewDidEndMoving:(ATPagingView *)pagingView;
 
 @end
 
