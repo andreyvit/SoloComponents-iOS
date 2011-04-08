@@ -41,7 +41,7 @@
 		_recycledPages = [[NSMutableSet alloc] init];
 		_currentPageIndex = 0;
 		_gapBetweenPages = 20.0;
-		_pagesToPreload = 0;
+		_pagesToPreload = 1;
 
 		// We are using an oversized UIScrollView to implement interpage gaps,
 		// and we need it to clipped on the sides. This is important when

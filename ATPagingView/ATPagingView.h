@@ -32,7 +32,7 @@
 
 @property(nonatomic, assign) CGFloat gapBetweenPages;  // default is 20
 
-@property(nonatomic, assign) NSInteger pagesToPreload;  // number of invisible pages to keep loaded to each side of the visible pages, default is 0
+@property(nonatomic, assign) NSInteger pagesToPreload;  // number of invisible pages to keep loaded to each side of the visible pages, default is 1
 
 @property(nonatomic, readonly) NSInteger pageCount;
 
