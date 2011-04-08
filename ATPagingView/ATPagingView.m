@@ -285,6 +285,9 @@
 // It's the caller's responsibility to remove this page from _visiblePages,
 // since this method is often called while traversing _visiblePages array.
 - (void)recyclePage:(UIView *)page {
+    if ([page respondsToSelector:@selector(prepareForReuse)]) {
+        [(id)page prepareForReuse];
+    }
 	[_recycledPages addObject:page];
 	[page removeFromSuperview];
 }
