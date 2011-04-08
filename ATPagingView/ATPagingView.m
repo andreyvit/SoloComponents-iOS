@@ -114,6 +114,9 @@
 	if (_rotationInProgress)
 		return;
 
+	// to avoid hiccups while scrolling, do not preload invisible pages temporarily
+	BOOL quickMode = (_scrollViewIsMoving && _pagesToPreload > 0);
+
 	CGSize contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
 	if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)) {
 		_scrollView.contentSize = contentSize;
@@ -123,8 +126,10 @@
 	NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
 
     // calculate which pages are visible
-    int firstPage = MAX(0, MIN(self.firstVisiblePageIndex, newPageIndex - _pagesToPreload));
-    int lastPage  = MIN(_pageCount-1, MAX(self.lastVisiblePageIndex, newPageIndex + _pagesToPreload));
+	int firstVisiblePage = self.firstVisiblePageIndex;
+	int lastVisiblePage  = self.lastVisiblePageIndex;
+    int firstPage = MAX(0,            MIN(firstVisiblePage, newPageIndex - _pagesToPreload));
+    int lastPage  = MIN(_pageCount-1, MAX(lastVisiblePage,  newPageIndex + _pagesToPreload));
 
     // recycle no longer visible pages
     for (UIView *page in _visiblePages) {
@@ -137,6 +142,9 @@
     // add missing pages
     for (int index = firstPage; index <= lastPage; index++) {
         if ([self viewForPageAtIndex:index] == nil) {
+			// only preload visible pages in quick mode
+			if (quickMode && (index < firstVisiblePage || index > lastVisiblePage))
+				continue;
 			UIView *page = [_delegate viewForPageInPagingView:self atIndex:index];
             [self configurePage:page forIndex:index];
             [_scrollView addSubview:page];
@@ -145,11 +153,20 @@
     }
 
 	// update loaded pages info
-	BOOL loadedPagesChanged = (_firstLoadedPageIndex != firstPage || _lastLoadedPageIndex != lastPage);
-	if (loadedPagesChanged) {
-		_firstLoadedPageIndex = firstPage;
-		_lastLoadedPageIndex  = lastPage;
-		NSLog(@"loadedPagesChanged: first == %d, last == %d", _firstLoadedPageIndex, _lastLoadedPageIndex);
+	BOOL loadedPagesChanged;
+	if (quickMode) {
+		// Delay the notification until we actually load all the promised pages.
+		// Also don't update _firstLoadedPageIndex and _lastLoadedPageIndex, so
+		// that the next time we are called with quickMode==NO, we know that a
+		// notification is still needed.
+		loadedPagesChanged = NO;
+	} else {
+		loadedPagesChanged = (_firstLoadedPageIndex != firstPage || _lastLoadedPageIndex != lastPage);
+		if (loadedPagesChanged) {
+			_firstLoadedPageIndex = firstPage;
+			_lastLoadedPageIndex  = lastPage;
+			NSLog(@"loadedPagesChanged: first == %d, last == %d", _firstLoadedPageIndex, _lastLoadedPageIndex);
+		}
 	}
 
 	// update current page index
@@ -344,6 +361,12 @@
 - (void)knownToBeIdle {
 	if (_scrollViewIsMoving) {
 		_scrollViewIsMoving = NO;
+
+		if (_pagesToPreload > 0) {
+			// we didn't preload invisible pages during scrolling, so now is the time
+			[self configurePages];
+		}
+
 		if ([_delegate respondsToSelector:@selector(pagingViewDidEndMoving:)]) {
 			[_delegate pagingViewDidEndMoving:self];
 		}
