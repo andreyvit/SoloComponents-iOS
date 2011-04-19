@@ -30,6 +30,7 @@
 @synthesize pageCount=_pageCount;
 @synthesize currentPageIndex=_currentPageIndex;
 @synthesize moving=_scrollViewIsMoving;
+@synthesize previousPageIndex=_previousPageIndex;
 @synthesize recyclingEnabled=_recyclingEnabled;
 
 
@@ -186,6 +187,7 @@
     // update current page index
     BOOL pageIndexChanged = (newPageIndex != _currentPageIndex);
     if (pageIndexChanged) {
+        _previousPageIndex = _currentPageIndex;
         _currentPageIndex = newPageIndex;
         if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
             [_delegate currentPageDidChangeInPagingView:self];

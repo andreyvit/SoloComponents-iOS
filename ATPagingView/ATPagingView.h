@@ -24,6 +24,8 @@
     NSMutableSet *_recycledPages;
     NSMutableSet *_visiblePages;
 
+    NSInteger _previousPageIndex;
+
     BOOL _rotationInProgress;
     BOOL _scrollViewIsMoving;
     BOOL _recyclingEnabled;
@@ -38,6 +40,7 @@
 @property(nonatomic, readonly) NSInteger pageCount;
 
 @property(nonatomic, assign, readonly) NSInteger currentPageIndex;
+@property(nonatomic, assign, readonly) NSInteger previousPageIndex; // only for reading inside currentPageDidChangeInPagingView
 
 @property(nonatomic, assign, readonly) NSInteger firstVisiblePageIndex;
 @property(nonatomic, assign, readonly) NSInteger lastVisiblePageIndex;
