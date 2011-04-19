@@ -77,6 +77,9 @@
 
 - (void)dealloc {
     [_scrollView release], _scrollView = nil;
+    _delegate = nil;
+    [_recycledPages release], _recycledPages = nil;
+    [_visiblePages release], _visiblePages = nil;
     [super dealloc];
 }
 
