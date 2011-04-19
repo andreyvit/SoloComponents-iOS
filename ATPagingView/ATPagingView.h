@@ -80,8 +80,10 @@
 @end
 
 
-@interface ATPagingViewController : UIViewController <ATPagingViewDelegate>
+@interface ATPagingViewController : UIViewController <ATPagingViewDelegate> {
+    ATPagingView *_pagingView;
+}
 
-@property(nonatomic, readonly) ATPagingView *pagingView;
+@property(nonatomic, retain) IBOutlet ATPagingView *pagingView;
 
 @end

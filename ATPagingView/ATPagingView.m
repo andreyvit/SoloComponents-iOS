@@ -392,11 +392,14 @@
 
 @implementation ATPagingViewController
 
+@synthesize pagingView=_pagingView;
+
 
 #pragma mark -
 #pragma mark init/dealloc
 
 - (void)dealloc {
+    [_pagingView release], _pagingView = nil;
     [super dealloc];
 }
 
@@ -405,7 +408,7 @@
 #pragma mark View Loading
 
 - (void)loadView {
-    self.view = [[[ATPagingView alloc] init] autorelease];
+    self.view = self.pagingView = [[[ATPagingView alloc] init] autorelease];
 }
 
 - (void)viewDidLoad {
@@ -420,14 +423,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     if (self.pagingView.pageCount == 0)
         [self.pagingView reloadData];
-}
-
-
-#pragma mark -
-#pragma mark View Access
-
-- (ATPagingView *)pagingView {
-    return (ATPagingView *)self.view;
 }
 
 
