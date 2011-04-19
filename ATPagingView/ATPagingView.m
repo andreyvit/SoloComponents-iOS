@@ -52,6 +52,7 @@
     self.clipsToBounds = YES;
 
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _scrollView.pagingEnabled = YES;
     _scrollView.backgroundColor = [UIColor blackColor];
     _scrollView.showsVerticalScrollIndicator = NO;
@@ -249,7 +250,7 @@
     //
     // So we set the new size, but keep the old position here.
     CGSize pageSize = _scrollView.frame.size;
-    [self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(_scrollView.contentOffset.x, 0, pageSize.width - _gapBetweenPages, pageSize.height);
+    [self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(_scrollView.contentOffset.x + _gapBetweenPages/2, 0, pageSize.width - _gapBetweenPages, pageSize.height);
 }
 
 - (void)didRotate {
