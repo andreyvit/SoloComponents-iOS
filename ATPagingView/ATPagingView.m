@@ -44,6 +44,7 @@
     _gapBetweenPages = 20.0;
     _pagesToPreload = 1;
     _recyclingEnabled = YES;
+    _firstLoadedPageIndex = _lastLoadedPageIndex = -1;
 
     // We are using an oversized UIScrollView to implement interpage gaps,
     // and we need it to clipped on the sides. This is important when
