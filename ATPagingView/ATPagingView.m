@@ -35,27 +35,38 @@
 #pragma mark -
 #pragma mark init/dealloc
 
+- (void)commonInit {
+    _visiblePages = [[NSMutableSet alloc] init];
+    _recycledPages = [[NSMutableSet alloc] init];
+    _currentPageIndex = 0;
+    _gapBetweenPages = 20.0;
+    _pagesToPreload = 1;
+
+    // We are using an oversized UIScrollView to implement interpage gaps,
+    // and we need it to clipped on the sides. This is important when
+    // someone uses ATPagingView in a non-fullscreen layout.
+    self.clipsToBounds = YES;
+
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    _scrollView.pagingEnabled = YES;
+    _scrollView.backgroundColor = [UIColor blackColor];
+    _scrollView.showsVerticalScrollIndicator = NO;
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.bounces = YES;
+    _scrollView.delegate = self;
+    [self addSubview:_scrollView];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        [self commonInit];
+    }
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        _visiblePages = [[NSMutableSet alloc] init];
-        _recycledPages = [[NSMutableSet alloc] init];
-        _currentPageIndex = 0;
-        _gapBetweenPages = 20.0;
-        _pagesToPreload = 1;
-
-        // We are using an oversized UIScrollView to implement interpage gaps,
-        // and we need it to clipped on the sides. This is important when
-        // someone uses ATPagingView in a non-fullscreen layout.
-        self.clipsToBounds = YES;
-
-        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
-        _scrollView.pagingEnabled = YES;
-        _scrollView.backgroundColor = [UIColor blackColor];
-        _scrollView.showsVerticalScrollIndicator = NO;
-        _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.bounces = YES;
-        _scrollView.delegate = self;
-        [self addSubview:_scrollView];
+        [self commonInit];
     }
     return self;
 }

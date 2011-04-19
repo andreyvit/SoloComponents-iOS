@@ -28,7 +28,7 @@
     BOOL _scrollViewIsMoving;
 }
 
-@property(nonatomic, assign) id<ATPagingViewDelegate> delegate;
+@property(nonatomic, assign) IBOutlet id<ATPagingViewDelegate> delegate;
 
 @property(nonatomic, assign) CGFloat gapBetweenPages;  // default is 20
 
