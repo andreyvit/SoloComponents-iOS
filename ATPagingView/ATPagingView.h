@@ -26,6 +26,7 @@
 
     BOOL _rotationInProgress;
     BOOL _scrollViewIsMoving;
+    BOOL _recyclingEnabled;
 }
 
 @property(nonatomic, assign) IBOutlet id<ATPagingViewDelegate> delegate;
@@ -45,6 +46,7 @@
 @property(nonatomic, assign, readonly) NSInteger lastLoadedPageIndex;
 
 @property(nonatomic, assign, readonly) BOOL moving;
+@property(nonatomic, assign) BOOL recyclingEnabled;
 
 - (void)reloadData;  // must be called at least once to display something
 

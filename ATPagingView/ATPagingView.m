@@ -30,6 +30,7 @@
 @synthesize pageCount=_pageCount;
 @synthesize currentPageIndex=_currentPageIndex;
 @synthesize moving=_scrollViewIsMoving;
+@synthesize recyclingEnabled=_recyclingEnabled;
 
 
 #pragma mark -
@@ -41,6 +42,7 @@
     _currentPageIndex = 0;
     _gapBetweenPages = 20.0;
     _pagesToPreload = 1;
+    _recyclingEnabled = YES;
 
     // We are using an oversized UIScrollView to implement interpage gaps,
     // and we need it to clipped on the sides. This is important when
@@ -98,8 +100,7 @@
 
     // recycle all pages
     for (UIView *view in _visiblePages) {
-        [_recycledPages addObject:view];
-        [view removeFromSuperview];
+        [self recyclePage:view];
     }
     [_visiblePages removeAllObjects];
 
@@ -143,12 +144,14 @@
     int lastPage  = MIN(_pageCount-1, MAX(lastVisiblePage,  newPageIndex + _pagesToPreload));
 
     // recycle no longer visible pages
+    NSMutableSet *pagesToRemove = [NSMutableSet set];
     for (UIView *page in _visiblePages) {
         if (page.tag < firstPage || page.tag > lastPage) {
             [self recyclePage:page];
+            [pagesToRemove addObject:page];
         }
     }
-    [_visiblePages minusSet:_recycledPages];
+    [_visiblePages minusSet:pagesToRemove];
 
     // add missing pages
     for (int index = firstPage; index <= lastPage; index++) {
@@ -221,11 +224,13 @@
     _rotationInProgress = YES;
 
     // recycle non-current pages, otherwise they might show up during the rotation
+    NSMutableSet *pagesToRemove = [NSMutableSet set];
     for (UIView *view in _visiblePages)
         if (view.tag != _currentPageIndex) {
             [self recyclePage:view];
+            [pagesToRemove addObject:view];
         }
-    [_visiblePages minusSet:_recycledPages];
+    [_visiblePages minusSet:pagesToRemove];
 
     // We're inside an animation block, this has two consequences:
     //
@@ -320,7 +325,11 @@
     if ([page respondsToSelector:@selector(prepareForReuse)]) {
         [(id)page prepareForReuse];
     }
-    [_recycledPages addObject:page];
+    if (_recyclingEnabled) {
+        [_recycledPages addObject:page];
+    } else {
+        NSLog(@"Releasing page %d because recycling is disabled", page.tag);
+    }
     [page removeFromSuperview];
 }
 
