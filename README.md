@@ -19,7 +19,7 @@ ATPagingView
 ATPagingView is a wrapper around UIScrollView in (horizontal) paging
 mode, with an API similar to UITableView.
 
-Status: beta. Based on code that was in use by App Store apps.
+Status: production-ready, used by at least one App Store app.
 
 You provide the page views by implementing two delegate methods:
 
