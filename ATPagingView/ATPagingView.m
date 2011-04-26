@@ -5,6 +5,9 @@
 #import "ATPagingView.h"
 
 
+//#define AT_PAGING_VIEW_TRACE_LAYOUT
+
+
 @interface ATPagingView () <UIScrollViewDelegate>
 
 - (void)configurePages;
@@ -51,7 +54,7 @@
     // someone uses ATPagingView in a non-fullscreen layout.
     self.clipsToBounds = YES;
 
-    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    _scrollView = [[UIScrollView alloc] initWithFrame:[self frameForScrollView]];
     _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _scrollView.pagingEnabled = YES;
     _scrollView.backgroundColor = [UIColor blackColor];
@@ -137,11 +140,23 @@
 
     CGSize contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
     if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)) {
+#ifdef AT_PAGING_VIEW_TRACE_LAYOUT
+        NSLog(@"configurePages: _scrollView.frame == %@, setting _scrollView.contentSize = %@",
+              NSStringFromCGRect(_scrollView.frame), NSStringFromCGSize(contentSize));
+#endif
         _scrollView.contentSize = contentSize;
+        _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * _currentPageIndex, 0);
+    } else {
+#ifdef AT_PAGING_VIEW_TRACE_LAYOUT
+        NSLog(@"configurePages: _scrollView.frame == %@", NSStringFromCGRect(_scrollView.frame));
+#endif
     }
 
     CGRect visibleBounds = _scrollView.bounds;
     NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
+#ifdef AT_PAGING_VIEW_TRACE_LAYOUT
+    NSLog(@"newPageIndex == %d", newPageIndex);
+#endif
 
     // calculate which pages are visible
     int firstVisiblePage = self.firstVisiblePageIndex;
@@ -263,6 +278,20 @@
     _rotationInProgress = NO;
 
     [self configurePages];
+}
+
+
+#pragma mark -
+#pragma mark Page navigation
+
+- (void)setCurrentPageIndex:(NSInteger)newPageIndex {
+#ifdef AT_PAGING_VIEW_TRACE_LAYOUT
+    NSLog(@"setCurrentPageIndex(%d): _scrollView.frame == %@", newPageIndex, NSStringFromCGRect(_scrollView.frame));
+#endif
+    if (_scrollView.frame.size.width > 0 && fabsf(_scrollView.frame.origin.x - (-_gapBetweenPages/2)) < 1e-6)
+        _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * newPageIndex, 0);
+    else
+        _currentPageIndex = newPageIndex;
 }
 
 
