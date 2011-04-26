@@ -1,6 +1,8 @@
 //
 //  Copyright 2011 Andrey Tarantsov. Distributed under the MIT license.
 //
+//  ATPagingView official version 1.1.
+//
 
 #import <Foundation/Foundation.h>
 
