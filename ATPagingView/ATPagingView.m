@@ -6,6 +6,8 @@
 
 
 //#define AT_PAGING_VIEW_TRACE_LAYOUT
+//#define AT_PAGING_VIEW_TRACE_DELEGATE_CALLS
+//#define AT_PAGING_VIEW_TRACE_PAGE_LIFECYCLE
 
 
 @interface ATPagingView () <UIScrollViewDelegate>
@@ -200,7 +202,9 @@
         if (loadedPagesChanged) {
             _firstLoadedPageIndex = firstPage;
             _lastLoadedPageIndex  = lastPage;
+#ifdef AT_PAGING_VIEW_TRACE_DELEGATE_CALLS
             NSLog(@"loadedPagesChanged: first == %d, last == %d", _firstLoadedPageIndex, _lastLoadedPageIndex);
+#endif
         }
     }
 
@@ -211,12 +215,16 @@
         _currentPageIndex = newPageIndex;
         if ([_delegate respondsToSelector:@selector(currentPageDidChangeInPagingView:)])
             [_delegate currentPageDidChangeInPagingView:self];
+#ifdef AT_PAGING_VIEW_TRACE_DELEGATE_CALLS
         NSLog(@"_currentPageIndex == %d", _currentPageIndex);
+#endif
     }
 
     if (loadedPagesChanged || pageIndexChanged) {
         if ([_delegate respondsToSelector:@selector(pagesDidChangeInPagingView:)]) {
+#ifdef AT_PAGING_VIEW_TRACE_DELEGATE_CALLS
             NSLog(@"pagesDidChangeInPagingView");
+#endif
             [_delegate pagesDidChangeInPagingView:self];
         }
     }
@@ -364,7 +372,9 @@
     if (_recyclingEnabled) {
         [_recycledPages addObject:page];
     } else {
+#ifdef AT_PAGING_VIEW_TRACE_PAGE_LIFECYCLE
         NSLog(@"Releasing page %d because recycling is disabled", page.tag);
+#endif
     }
     [page removeFromSuperview];
 }
