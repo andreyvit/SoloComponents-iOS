@@ -132,8 +132,10 @@
 }
 
 - (void)configurePages {
-    if (_scrollView.frame.size.width == 0)
+    if (_scrollView.frame.size.width <= _gapBetweenPages + 1e-6)
         return;  // not our time yet
+    if (_pageCount == 0 && _currentPageIndex > 0)
+        return;  // still not our time
 
     // normally layoutSubviews won't even call us, but protect against any other calls too (e.g. if someones does reloadPages)
     if (_rotationInProgress)
@@ -161,6 +163,8 @@
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
     NSLog(@"newPageIndex == %d", newPageIndex);
 #endif
+
+    newPageIndex = MAX(0, MIN(_pageCount, newPageIndex));
 
     // calculate which pages are visible
     int firstVisiblePage = self.firstVisiblePageIndex;
@@ -298,10 +302,10 @@
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
     NSLog(@"setCurrentPageIndex(%d): _scrollView.frame == %@", newPageIndex, NSStringFromCGRect(_scrollView.frame));
 #endif
-    if (_scrollView.frame.size.width > 0 && fabsf(_scrollView.frame.origin.x - (-_gapBetweenPages/2)) < 1e-6)
+    if (_scrollView.frame.size.width > 0 && fabsf(_scrollView.frame.origin.x - (-_gapBetweenPages/2)) < 1e-6) {
         _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * newPageIndex, 0);
-    else
-        _currentPageIndex = newPageIndex;
+    }
+    _currentPageIndex = newPageIndex;
 }
 
 
