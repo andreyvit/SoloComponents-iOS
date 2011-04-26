@@ -474,6 +474,13 @@
         self.pagingView.delegate = self;
 }
 
+- (ATPagingView *)pagingView {
+    if (![self isViewLoaded]) {
+        [self view];
+    }
+    return _pagingView;
+}
+
 
 #pragma mark Lifecycle
 
