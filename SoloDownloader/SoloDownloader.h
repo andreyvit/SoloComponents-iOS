@@ -6,9 +6,32 @@
 //
 #import <Foundation/Foundation.h>
 
+@class SoloDownloadQueue;
 @class SoloDownloadJob;
 @class SoloDownloadTask;
 @class SoloDownloadOperation;
+
+
+@interface SoloDownloadQueue : NSObject {
+@private
+    NSOperationQueue      *_operationQueue;
+    NSMutableArray        *_waitingJobs;
+    SoloDownloadJob       *_runningJob;
+    BOOL                   _verbose;
+}
+
+@property(nonatomic) BOOL verbose;
+
+@property(nonatomic, retain) NSOperationQueue *operationQueue;  // creates the queue on first read if not previously set
+
+@property(nonatomic, readonly) SoloDownloadJob *runningJob;
+
+- (void)scheduleJob:(SoloDownloadJob *)job;
+- (void)unscheduleJob:(SoloDownloadJob *)job;
+//- (BOOL)isJobScheduled:(SoloDownloadJob *)job;
+
+@end
+
 
 
 typedef enum {
@@ -22,17 +45,23 @@ typedef enum {
 @interface SoloDownloadJob : NSObject {
     NSMutableArray        *_tasks;
     NSOperationQueue      *_operationQueue;
+    SoloDownloadQueue     *_scheduler; // weak
 
     unsigned long long     _currentSize;
     unsigned long long     _totalSize;
 
+    BOOL                   _verbose;
     BOOL                   _initialProgressComputed;
     NSError               *_lastError;
     NSInteger              _tasksEnqueued;
     NSInteger              _tasksFinished;
 }
 
+@property(nonatomic) BOOL verbose;
+
 @property(nonatomic, retain) NSOperationQueue *operationQueue;  // creates the queue on first read if not previously set
+
+@property(nonatomic, assign) __weak SoloDownloadQueue *scheduler;
 
 @property(nonatomic, readonly) unsigned long long currentSize;
 @property(nonatomic) unsigned long long totalSize;

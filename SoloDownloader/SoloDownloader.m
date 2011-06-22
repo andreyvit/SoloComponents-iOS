@@ -8,6 +8,138 @@
 #import <sys/stat.h>
 
 
+static NSString *const JOB_STATE_NAMES[] = {@"NeverStarted", @"Paused", @"Running", @"Finished", @"Failed"};
+
+
+
+@interface SoloDownloadJob (JobMethodsForQueue)
+
+- (void)doStart;
+- (void)doStop;
+
+@end
+
+
+
+#pragma mark SoloDownloadQueue
+
+@interface SoloDownloadQueue ()
+
+- (void)setRunningJob:(SoloDownloadJob *)job;
+- (void)pickAnotherJobToRun;
+
+@end
+
+@implementation SoloDownloadQueue
+
+@synthesize operationQueue=_operationQueue;
+@synthesize runningJob=_runningJob;
+@synthesize verbose=_verbose;
+
+
+#pragma mark init/dealloc
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _waitingJobs = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [self setRunningJob:nil];
+    [_waitingJobs release], _waitingJobs = nil;
+    [super dealloc];
+}
+
+
+#pragma mark NSOperationQueue management
+
+- (NSOperationQueue *)operationQueue {
+    if (_operationQueue == nil) {
+        _operationQueue = [[NSOperationQueue alloc] init];
+    }
+    return _operationQueue;
+}
+
+
+#pragma mark Scheduling
+
+- (void)setRunningJob:(SoloDownloadJob *)job {
+    if (_runningJob != job) {
+        [_runningJob removeObserver:self forKeyPath:@"state"];
+        [_runningJob release], _runningJob = nil;
+
+        _runningJob = [job retain];
+        [_runningJob addObserver:self forKeyPath:@"state" options:0 context:nil];
+        if (_verbose && _runningJob) {
+            NSLog(@"SoloDownloadQueue: starting job %@", [_runningJob description]);
+        }
+        [_runningJob doStart];
+    }
+}
+
+- (void)scheduleJob:(SoloDownloadJob *)job {
+    job.operationQueue = self.operationQueue;
+    if (_runningJob == nil) {
+        if (_verbose) {
+            NSLog(@"SoloDownloadQueue: adding first job, will run immediately -- %@", [job description]);
+        }
+        [self setRunningJob:job];
+    } else {
+        if (_verbose) {
+            NSLog(@"SoloDownloadQueue: adding job to waiting list -- %@", [job description]);
+        }
+        [_waitingJobs addObject:job];
+    }
+}
+
+- (void)unscheduleJob:(SoloDownloadJob *)job {
+    if (_runningJob == job) {
+        if (_verbose) {
+            NSLog(@"SoloDownloadQueue: unscheduling running job -- %@", [job description]);
+        }
+        [job doStop];
+        [self pickAnotherJobToRun];
+    } else {
+        if (_verbose) {
+            NSLog(@"SoloDownloadQueue: unscheduling waiting job -- %@", [job description]);
+        }
+        [_waitingJobs removeObject:job];
+    }
+}
+
+- (void)pickAnotherJobToRun {
+    if ([_waitingJobs count] > 0) {
+        if (_verbose) {
+            NSLog(@"SoloDownloadQueue: picking the first job (of %d) in the waiting list to run", [_waitingJobs count]);
+        }
+        SoloDownloadJob *job = [_waitingJobs objectAtIndex:0];
+        [_waitingJobs removeObjectAtIndex:0];
+        [self setRunningJob:job];
+    } else {
+        [self setRunningJob:nil];
+    }
+}
+
+#pragma mark KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"state"]) {
+        SoloDownloadJob *job = object;
+        if (job == _runningJob && job.state != SoloDownloadJobStateRunning) {
+            if (_verbose) {
+                NSLog(@"SoloDownloadQueue: running job transitioned into state %@ -- %@", JOB_STATE_NAMES[job.state], [job description]);
+            }
+            [self pickAnotherJobToRun];
+        }
+    }
+}
+
+@end
+
+
 #pragma mark - SoloDownloadJob
 
 
@@ -22,7 +154,9 @@
 
 @implementation SoloDownloadJob
 
+@synthesize verbose=_verbose;
 @synthesize operationQueue=_operationQueue;
+@synthesize scheduler=_scheduler;
 @synthesize tasks=_tasks;
 @synthesize totalSize=_totalSize;
 @synthesize lastError=_lastError;
@@ -99,7 +233,7 @@
 }
 
 
-#pragma mark Queue management
+#pragma mark NSOperationQueue management
 
 - (NSOperationQueue *)operationQueue {
     if (_operationQueue == nil) {
@@ -125,6 +259,25 @@
 #pragma mark Start/stop
 
 - (void)start {
+    if (_scheduler) {
+        [_scheduler scheduleJob:self];
+    } else {
+        [self doStart];
+    }
+}
+
+- (void)stop {
+    if (_scheduler) {
+        [_scheduler unscheduleJob:self];
+    } else {
+        [self doStop];
+    }
+}
+
+- (void)doStart {
+    if (_verbose) {
+        NSLog(@"SoloDownloadJob(%p): starting", self);
+    }
     if (!_initialProgressComputed) {
         [self computeInitialProgress];
     }
@@ -139,7 +292,7 @@
     }
 }
 
-- (void)stop {
+- (void)doStop {
     if (![self isRunning]) {
         return;
     }
@@ -160,6 +313,9 @@
 - (void)taskEnqueued:(SoloDownloadTask *)task {
     [self willChangeValueForKey:@"state"];
     _tasksEnqueued++;
+    if (_verbose) {
+        NSLog(@"SoloDownloadJob(%p): enqueued task %@", self, [task description]);
+    }
     [self didChangeValueForKey:@"state"];
 }
 
@@ -169,6 +325,10 @@
 
     [self willChangeValueForKey:@"state"];
     _tasksEnqueued--;
+
+    if (_verbose) {
+        NSLog(@"SoloDownloadJob(%p): dequeued task %@", self, [task description]);
+    }
 
     if (task.lastError && _lastError == nil) {
         _lastError = [task.lastError retain];
@@ -202,8 +362,14 @@
         if (oldValue != task.finished)
             if (task.finished) {
                 _tasksFinished++;
+                if (_verbose) {
+                    NSLog(@"SoloDownloadJob(%p): task finished %@", self, [task description]);
+                }
             } else {
                 _tasksFinished--;
+                if (_verbose) {
+                    NSLog(@"SoloDownloadJob(%p): task no longer finished %@", self, [task description]);
+                }
             }
         [self didChangeValueForKey:@"state"];
     }
@@ -262,6 +428,13 @@
     [_destinationPath release], _destinationPath = nil;
     [_interimPath release], _interimPath = nil;
     [super dealloc];
+}
+
+
+#pragma mark Debugging
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"SoloDownloadTask(%p%@, progress=%llu, %@)", self, (_finished ? @", FINISHED" : @""), _progress, [_destinationPath lastPathComponent]];
 }
 
 

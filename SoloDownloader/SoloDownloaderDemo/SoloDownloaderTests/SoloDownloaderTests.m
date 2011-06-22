@@ -73,10 +73,9 @@
     [self verifyImageAt:localPath bytes:835365 size:CGSizeMake(2592, 1944)];
 }
 
-- (void)testSuccessfulDownloadWithJob {
+- (void)xtestSuccessfulDownloadWithJob {
     SoloDownloadJob *job = [[[SoloDownloadJob alloc] init] autorelease];
 
-    NSInteger count = 0;
     for (NSString *fileName in [self sampleImages]) {
         NSURL *url = [self URLForImageNamed:fileName];
         NSString *localPath = [self localPathForImageNamed:fileName];
@@ -105,6 +104,50 @@
     [self verifyImageAt:[[job.tasks objectAtIndex:10] destinationPath] bytes:1433206 size:CGSizeMake(1944, 2592)];
     [self verifyImageAt:[[job.tasks objectAtIndex:11] destinationPath] bytes:2000798 size:CGSizeMake(2592, 1944)];
     [self verifyImageAt:[[job.tasks objectAtIndex:12] destinationPath] bytes:2108314 size:CGSizeMake(2592, 1944)];
+}
+
+- (void)testSuccessfulDownloadWithQueue {
+    SoloDownloadQueue *queue = [[[SoloDownloadQueue alloc] init] autorelease];
+    [queue.operationQueue setMaxConcurrentOperationCount:4];
+    queue.verbose = YES;
+
+    NSInteger index = 0;
+    NSArray *sampleImages = [self sampleImages];
+    NSMutableArray *tasks = [NSMutableArray array];
+    for (int jobIndex = 0; jobIndex < 3; jobIndex++) {
+        SoloDownloadJob *job = [[[SoloDownloadJob alloc] init] autorelease];
+        job.scheduler = queue;
+        job.verbose = YES;
+
+        for (NSInteger count = 0; index < [sampleImages count] && count < 6; index++, count++) {
+            NSString *fileName = [sampleImages objectAtIndex:index];
+            NSURL *url = [self URLForImageNamed:fileName];
+            NSString *localPath = [self localPathForImageNamed:fileName];
+            [[NSFileManager defaultManager] removeItemAtPath:localPath error:nil];
+
+            SoloDownloadTask *task = [[[SoloDownloadTask alloc] initWithURL:url destinationPath:localPath interimPath:nil] autorelease];
+            [tasks addObject:task];
+            [job addTask:task];
+        }
+
+        [job start];
+    }
+
+    [self runWhile:^() { return (BOOL) !!queue.runningJob; }];
+
+    [self verifyImageAt:[[tasks objectAtIndex:0] destinationPath] bytes:835365 size:CGSizeMake(2592, 1944)];
+    [self verifyImageAt:[[tasks objectAtIndex:1] destinationPath] bytes:412502 size:CGSizeMake(2048, 1444)];
+    [self verifyImageAt:[[tasks objectAtIndex:2] destinationPath] bytes:744121 size:CGSizeMake(2592, 1944)];
+    [self verifyImageAt:[[tasks objectAtIndex:3] destinationPath] bytes:626528 size:CGSizeMake(2592, 1944)];
+    [self verifyImageAt:[[tasks objectAtIndex:4] destinationPath] bytes:1071877 size:CGSizeMake(2592, 1944)];
+    [self verifyImageAt:[[tasks objectAtIndex:5] destinationPath] bytes:276225 size:CGSizeMake(1536, 1024)];
+    [self verifyImageAt:[[tasks objectAtIndex:6] destinationPath] bytes:1021929 size:CGSizeMake(2640, 1980)];
+    [self verifyImageAt:[[tasks objectAtIndex:7] destinationPath] bytes:1005329 size:CGSizeMake(2800, 1867)];
+    [self verifyImageAt:[[tasks objectAtIndex:8] destinationPath] bytes:1224028 size:CGSizeMake(1944, 2592)];
+    [self verifyImageAt:[[tasks objectAtIndex:9] destinationPath] bytes:1082475 size:CGSizeMake(1944, 2592)];
+    [self verifyImageAt:[[tasks objectAtIndex:10] destinationPath] bytes:1433206 size:CGSizeMake(1944, 2592)];
+    [self verifyImageAt:[[tasks objectAtIndex:11] destinationPath] bytes:2000798 size:CGSizeMake(2592, 1944)];
+    [self verifyImageAt:[[tasks objectAtIndex:12] destinationPath] bytes:2108314 size:CGSizeMake(2592, 1944)];
 }
 
 @end
