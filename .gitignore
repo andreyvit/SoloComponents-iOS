@@ -2,5 +2,6 @@
 *.mode1v3
 *.pbxuser
 *.perspectivev3
+xcuserdata
 ATPagingView/ATPagingViewDemo/build
 ATArrayView/ATArrayViewDemo/build
