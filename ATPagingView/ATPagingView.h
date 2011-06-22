@@ -8,7 +8,17 @@
 
 @protocol ATPagingViewDelegate;
 
-// a wrapper around UIScrollView in (horizontal) paging mode, with an API similar to UITableView
+// A wrapper around UIScrollView in (horizontal) paging mode, with an
+// API similar to UITableView.
+//
+// Adds the following features on top of UIScrollView:
+//
+// * API in terms of pages
+// * automatic management of page view loading and unloading
+// * expected rotation behavior with smooth animation
+// * configurable gap between pages
+// * configurable preloading of next/previous yet-invisible pages
+
 @interface ATPagingView : UIView {
     // subviews
     UIScrollView *_scrollView;
@@ -39,28 +49,29 @@
 
 @property(nonatomic, assign) NSInteger pagesToPreload;  // number of invisible pages to keep loaded to each side of the visible pages, default is 1
 
-@property(nonatomic, readonly) NSInteger pageCount;
+@property(nonatomic, readonly) NSInteger pageCount;     // cached number of pages
 
-@property(nonatomic, assign) NSInteger currentPageIndex;
+@property(nonatomic, assign) NSInteger currentPageIndex;  // set to navigate to another page
 @property(nonatomic, assign, readonly) NSInteger previousPageIndex; // only for reading inside currentPageDidChangeInPagingView
 
 @property(nonatomic, assign, readonly) NSInteger firstVisiblePageIndex;
 @property(nonatomic, assign, readonly) NSInteger lastVisiblePageIndex;
 
-@property(nonatomic, assign, readonly) NSInteger firstLoadedPageIndex;
-@property(nonatomic, assign, readonly) NSInteger lastLoadedPageIndex;
+@property(nonatomic, assign, readonly) NSInteger firstLoadedPageIndex;   // == firstVisiblePageIndex if pagesToPreload==0, otherwise could be less
+@property(nonatomic, assign, readonly) NSInteger lastLoadedPageIndex;    // == lastVisiblePageIndex  if pagesToPreload==0, otherwise could be greater
 
-@property(nonatomic, assign, readonly) BOOL moving;
-@property(nonatomic, assign) BOOL recyclingEnabled;
+@property(nonatomic, assign, readonly) BOOL moving;  // YES if scrolling or decelerating at the moment
+
+@property(nonatomic, assign) BOOL recyclingEnabled; // set to NO to always allocate new page views for new pages, default is YES
 
 - (void)reloadData;  // must be called at least once to display something
 
 - (UIView *)viewForPageAtIndex:(NSUInteger)index;  // nil if not loaded
 
-- (UIView *)dequeueReusablePage;  // nil if none
+- (UIView *)dequeueReusablePage;  // nil if none available, always nil if recyclingEnabled==NO
 
+// Rotation hooks. Call from your view controller to allow for better rotation logic.
 - (void)willAnimateRotation;  // call this from willAnimateRotationToInterfaceOrientation:duration:
-
 - (void)didRotate;  // call this from didRotateFromInterfaceOrientation:
 
 @end
