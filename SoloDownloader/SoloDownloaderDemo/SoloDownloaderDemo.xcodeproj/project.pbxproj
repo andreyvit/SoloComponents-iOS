@@ -1,0 +1,451 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		435B6C1713B03935001A10BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1613B03935001A10BF /* UIKit.framework */; };
+		435B6C1913B03935001A10BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1813B03935001A10BF /* Foundation.framework */; };
+		435B6C1B13B03935001A10BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1A13B03935001A10BF /* CoreGraphics.framework */; };
+		435B6C2113B03935001A10BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 435B6C1F13B03935001A10BF /* InfoPlist.strings */; };
+		435B6C2413B03935001A10BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C2313B03935001A10BF /* main.m */; };
+		435B6C2713B03935001A10BF /* SoloDownloaderDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C2613B03935001A10BF /* SoloDownloaderDemoAppDelegate.m */; };
+		435B6C2A13B03935001A10BF /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 435B6C2813B03935001A10BF /* MainWindow.xib */; };
+		435B6C2D13B03935001A10BF /* SoloDownloaderDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C2C13B03935001A10BF /* SoloDownloaderDemoViewController.m */; };
+		435B6C3013B03935001A10BF /* SoloDownloaderDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 435B6C2E13B03935001A10BF /* SoloDownloaderDemoViewController.xib */; };
+		435B6C3A13B039CB001A10BF /* SoloDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C3913B039CB001A10BF /* SoloDownloader.m */; };
+		435B6C4A13B152F2001A10BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1613B03935001A10BF /* UIKit.framework */; };
+		435B6C4B13B152F2001A10BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1813B03935001A10BF /* Foundation.framework */; };
+		435B6C4C13B152F2001A10BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 435B6C1A13B03935001A10BF /* CoreGraphics.framework */; };
+		435B6C5213B152F2001A10BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 435B6C5013B152F2001A10BF /* InfoPlist.strings */; };
+		435B6C5513B152F2001A10BF /* SoloDownloaderTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 435B6C5413B152F2001A10BF /* SoloDownloaderTests.h */; };
+		435B6C5713B152F2001A10BF /* SoloDownloaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C5613B152F2001A10BF /* SoloDownloaderTests.m */; };
+		435B6C6513B163E2001A10BF /* SoloDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 435B6C3913B039CB001A10BF /* SoloDownloader.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		435B6C1213B03935001A10BF /* SoloDownloaderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoloDownloaderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		435B6C1613B03935001A10BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		435B6C1813B03935001A10BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		435B6C1A13B03935001A10BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		435B6C1E13B03935001A10BF /* SoloDownloaderDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SoloDownloaderDemo-Info.plist"; sourceTree = "<group>"; };
+		435B6C2013B03935001A10BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		435B6C2213B03935001A10BF /* SoloDownloaderDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SoloDownloaderDemo-Prefix.pch"; sourceTree = "<group>"; };
+		435B6C2313B03935001A10BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		435B6C2513B03935001A10BF /* SoloDownloaderDemoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoloDownloaderDemoAppDelegate.h; sourceTree = "<group>"; };
+		435B6C2613B03935001A10BF /* SoloDownloaderDemoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoloDownloaderDemoAppDelegate.m; sourceTree = "<group>"; };
+		435B6C2913B03935001A10BF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		435B6C2B13B03935001A10BF /* SoloDownloaderDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoloDownloaderDemoViewController.h; sourceTree = "<group>"; };
+		435B6C2C13B03935001A10BF /* SoloDownloaderDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoloDownloaderDemoViewController.m; sourceTree = "<group>"; };
+		435B6C2F13B03935001A10BF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SoloDownloaderDemoViewController.xib; sourceTree = "<group>"; };
+		435B6C3813B039CB001A10BF /* SoloDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoloDownloader.h; path = ../../SoloDownloader.h; sourceTree = "<group>"; };
+		435B6C3913B039CB001A10BF /* SoloDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SoloDownloader.m; path = ../../SoloDownloader.m; sourceTree = "<group>"; };
+		435B6C4913B152F2001A10BF /* SoloDownloaderTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoloDownloaderTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		435B6C4F13B152F2001A10BF /* SoloDownloaderTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SoloDownloaderTests-Info.plist"; sourceTree = "<group>"; };
+		435B6C5113B152F2001A10BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		435B6C5313B152F2001A10BF /* SoloDownloaderTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SoloDownloaderTests-Prefix.pch"; sourceTree = "<group>"; };
+		435B6C5413B152F2001A10BF /* SoloDownloaderTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoloDownloaderTests.h; sourceTree = "<group>"; };
+		435B6C5613B152F2001A10BF /* SoloDownloaderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SoloDownloaderTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		435B6C0F13B03935001A10BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C1713B03935001A10BF /* UIKit.framework in Frameworks */,
+				435B6C1913B03935001A10BF /* Foundation.framework in Frameworks */,
+				435B6C1B13B03935001A10BF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		435B6C4513B152F2001A10BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C4A13B152F2001A10BF /* UIKit.framework in Frameworks */,
+				435B6C4B13B152F2001A10BF /* Foundation.framework in Frameworks */,
+				435B6C4C13B152F2001A10BF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		435B6C0713B03935001A10BF = {
+			isa = PBXGroup;
+			children = (
+				435B6C1C13B03935001A10BF /* SoloDownloaderDemo */,
+				435B6C4D13B152F2001A10BF /* SoloDownloaderTests */,
+				435B6C1513B03935001A10BF /* Frameworks */,
+				435B6C1313B03935001A10BF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		435B6C1313B03935001A10BF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C1213B03935001A10BF /* SoloDownloaderDemo.app */,
+				435B6C4913B152F2001A10BF /* SoloDownloaderTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		435B6C1513B03935001A10BF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C1613B03935001A10BF /* UIKit.framework */,
+				435B6C1813B03935001A10BF /* Foundation.framework */,
+				435B6C1A13B03935001A10BF /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		435B6C1C13B03935001A10BF /* SoloDownloaderDemo */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C3713B039BF001A10BF /* SoloComponents */,
+				435B6C2513B03935001A10BF /* SoloDownloaderDemoAppDelegate.h */,
+				435B6C2613B03935001A10BF /* SoloDownloaderDemoAppDelegate.m */,
+				435B6C2813B03935001A10BF /* MainWindow.xib */,
+				435B6C2B13B03935001A10BF /* SoloDownloaderDemoViewController.h */,
+				435B6C2C13B03935001A10BF /* SoloDownloaderDemoViewController.m */,
+				435B6C2E13B03935001A10BF /* SoloDownloaderDemoViewController.xib */,
+				435B6C1D13B03935001A10BF /* Supporting Files */,
+			);
+			path = SoloDownloaderDemo;
+			sourceTree = "<group>";
+		};
+		435B6C1D13B03935001A10BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C1E13B03935001A10BF /* SoloDownloaderDemo-Info.plist */,
+				435B6C1F13B03935001A10BF /* InfoPlist.strings */,
+				435B6C2213B03935001A10BF /* SoloDownloaderDemo-Prefix.pch */,
+				435B6C2313B03935001A10BF /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		435B6C3713B039BF001A10BF /* SoloComponents */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C3813B039CB001A10BF /* SoloDownloader.h */,
+				435B6C3913B039CB001A10BF /* SoloDownloader.m */,
+			);
+			name = SoloComponents;
+			sourceTree = "<group>";
+		};
+		435B6C4D13B152F2001A10BF /* SoloDownloaderTests */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C5413B152F2001A10BF /* SoloDownloaderTests.h */,
+				435B6C5613B152F2001A10BF /* SoloDownloaderTests.m */,
+				435B6C4E13B152F2001A10BF /* Supporting Files */,
+			);
+			path = SoloDownloaderTests;
+			sourceTree = "<group>";
+		};
+		435B6C4E13B152F2001A10BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				435B6C4F13B152F2001A10BF /* SoloDownloaderTests-Info.plist */,
+				435B6C5013B152F2001A10BF /* InfoPlist.strings */,
+				435B6C5313B152F2001A10BF /* SoloDownloaderTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		435B6C1113B03935001A10BF /* SoloDownloaderDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 435B6C3313B03935001A10BF /* Build configuration list for PBXNativeTarget "SoloDownloaderDemo" */;
+			buildPhases = (
+				435B6C0E13B03935001A10BF /* Sources */,
+				435B6C0F13B03935001A10BF /* Frameworks */,
+				435B6C1013B03935001A10BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SoloDownloaderDemo;
+			productName = SoloDownloaderDemo;
+			productReference = 435B6C1213B03935001A10BF /* SoloDownloaderDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		435B6C4813B152F2001A10BF /* SoloDownloaderTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 435B6C5813B152F2001A10BF /* Build configuration list for PBXNativeTarget "SoloDownloaderTests" */;
+			buildPhases = (
+				435B6C4413B152F2001A10BF /* Sources */,
+				435B6C4513B152F2001A10BF /* Frameworks */,
+				435B6C4613B152F2001A10BF /* Resources */,
+				435B6C4713B152F2001A10BF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SoloDownloaderTests;
+			productName = SoloDownloaderTests;
+			productReference = 435B6C4913B152F2001A10BF /* SoloDownloaderTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		435B6C0913B03935001A10BF /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 435B6C0C13B03935001A10BF /* Build configuration list for PBXProject "SoloDownloaderDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 435B6C0713B03935001A10BF;
+			productRefGroup = 435B6C1313B03935001A10BF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				435B6C1113B03935001A10BF /* SoloDownloaderDemo */,
+				435B6C4813B152F2001A10BF /* SoloDownloaderTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		435B6C1013B03935001A10BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C2113B03935001A10BF /* InfoPlist.strings in Resources */,
+				435B6C2A13B03935001A10BF /* MainWindow.xib in Resources */,
+				435B6C3013B03935001A10BF /* SoloDownloaderDemoViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		435B6C4613B152F2001A10BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C5213B152F2001A10BF /* InfoPlist.strings in Resources */,
+				435B6C5513B152F2001A10BF /* SoloDownloaderTests.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		435B6C4713B152F2001A10BF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		435B6C0E13B03935001A10BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C2413B03935001A10BF /* main.m in Sources */,
+				435B6C2713B03935001A10BF /* SoloDownloaderDemoAppDelegate.m in Sources */,
+				435B6C2D13B03935001A10BF /* SoloDownloaderDemoViewController.m in Sources */,
+				435B6C3A13B039CB001A10BF /* SoloDownloader.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		435B6C4413B152F2001A10BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				435B6C6513B163E2001A10BF /* SoloDownloader.m in Sources */,
+				435B6C5713B152F2001A10BF /* SoloDownloaderTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		435B6C1F13B03935001A10BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				435B6C2013B03935001A10BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		435B6C2813B03935001A10BF /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				435B6C2913B03935001A10BF /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		435B6C2E13B03935001A10BF /* SoloDownloaderDemoViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				435B6C2F13B03935001A10BF /* en */,
+			);
+			name = SoloDownloaderDemoViewController.xib;
+			sourceTree = "<group>";
+		};
+		435B6C5013B152F2001A10BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				435B6C5113B152F2001A10BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		435B6C3113B03935001A10BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		435B6C3213B03935001A10BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		435B6C3413B03935001A10BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SoloDownloaderDemo/SoloDownloaderDemo-Prefix.pch";
+				INFOPLIST_FILE = "SoloDownloaderDemo/SoloDownloaderDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		435B6C3513B03935001A10BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SoloDownloaderDemo/SoloDownloaderDemo-Prefix.pch";
+				INFOPLIST_FILE = "SoloDownloaderDemo/SoloDownloaderDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		435B6C5913B152F2001A10BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SoloDownloaderTests/SoloDownloaderTests-Prefix.pch";
+				INFOPLIST_FILE = "SoloDownloaderTests/SoloDownloaderTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		435B6C5A13B152F2001A10BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SoloDownloaderTests/SoloDownloaderTests-Prefix.pch";
+				INFOPLIST_FILE = "SoloDownloaderTests/SoloDownloaderTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		435B6C0C13B03935001A10BF /* Build configuration list for PBXProject "SoloDownloaderDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				435B6C3113B03935001A10BF /* Debug */,
+				435B6C3213B03935001A10BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		435B6C3313B03935001A10BF /* Build configuration list for PBXNativeTarget "SoloDownloaderDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				435B6C3413B03935001A10BF /* Debug */,
+				435B6C3513B03935001A10BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		435B6C5813B152F2001A10BF /* Build configuration list for PBXNativeTarget "SoloDownloaderTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				435B6C5913B152F2001A10BF /* Debug */,
+				435B6C5A13B152F2001A10BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 435B6C0913B03935001A10BF /* Project object */;
+}
