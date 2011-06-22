@@ -4,7 +4,7 @@
 
 
 @interface SoloDownloaderTests : SenTestCase {
-@private 
+@private
 }
 
 @end

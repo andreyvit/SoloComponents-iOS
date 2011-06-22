@@ -8,6 +8,210 @@
 #import <sys/stat.h>
 
 
+#pragma mark - SoloDownloadJob
+
+
+@interface SoloDownloadJob ()
+
+- (void)computeInitialProgress;
+
+- (void)startOperationForTask:(SoloDownloadTask *)task;
+
+@end
+
+
+@implementation SoloDownloadJob
+
+@synthesize operationQueue=_operationQueue;
+@synthesize tasks=_tasks;
+@synthesize totalSize=_totalSize;
+@synthesize lastError=_lastError;
+
+
+#pragma mark init/dealloc
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _tasks = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [_operationQueue cancelAllOperations];
+    [_operationQueue waitUntilAllOperationsAreFinished];
+    [_operationQueue release], _operationQueue = nil;
+    [_tasks release], _tasks = nil;
+    [_lastError release], _lastError = nil;
+    [super dealloc];
+}
+
+
+#pragma mark Progress
+
+- (unsigned long long)currentSize {
+    if (!_initialProgressComputed) {
+        [self computeInitialProgress];
+    }
+    return _currentSize;
+}
+
+- (void)countInitialProgressForTask:(SoloDownloadTask *)task {
+    _currentSize += task.progress;
+    if (task.finished) {
+        _tasksFinished++;
+    }
+}
+
+- (void)computeInitialProgress {
+    _currentSize = 0;
+
+    for (SoloDownloadTask *task in _tasks) {
+        [self countInitialProgressForTask:task];
+    }
+
+    _initialProgressComputed = YES;
+}
+
+
+#pragma mark State
+
+- (BOOL)isRunning {
+    return _tasksEnqueued > 0;
+}
+
+- (SoloDownloadJobState)state {
+    if (!_initialProgressComputed) {
+        [self computeInitialProgress];
+    }
+    if ([self isRunning]) {
+        return SoloDownloadJobStateRunning;
+    } else if (_lastError) {
+        return SoloDownloadJobStateFailed;
+    } else if (_tasksFinished >= [_tasks count]) {
+        return SoloDownloadJobStateFinished;
+    } else if (_currentSize > 0) {
+        return SoloDownloadJobStatePaused;
+    } else {
+        return SoloDownloadJobStateNeverStarted;
+    }
+}
+
+
+#pragma mark Queue management
+
+- (NSOperationQueue *)operationQueue {
+    if (_operationQueue == nil) {
+        _operationQueue = [[NSOperationQueue alloc] init];
+    }
+    return _operationQueue;
+}
+
+
+#pragma mark Task management
+
+- (void)addTask:(SoloDownloadTask *)task {
+    [_tasks addObject:task];
+    if (_initialProgressComputed) {
+        [self countInitialProgressForTask:task];
+    }
+    if ([self isRunning]) {
+        [self startOperationForTask:task];
+    }
+}
+
+
+#pragma mark Start/stop
+
+- (void)start {
+    if (!_initialProgressComputed) {
+        [self computeInitialProgress];
+    }
+    if ([self isRunning]) {
+        return;
+    }
+    [_lastError release], _lastError = nil;
+    for (SoloDownloadTask *task in _tasks) {
+        if (!task.finished) {
+            [self startOperationForTask:task];
+        }
+    }
+}
+
+- (void)stop {
+    if (![self isRunning]) {
+        return;
+    }
+    for (SoloDownloadTask *task in _tasks) {
+        [task cancel];
+    }
+}
+
+
+#pragma mark Task operations
+
+- (void)startOperationForTask:(SoloDownloadTask *)task {
+    [task addObserver:self forKeyPath:@"queued" options:NSKeyValueObservingOptionOld context:nil];
+    [task addObserver:self forKeyPath:@"finished" options:NSKeyValueObservingOptionOld context:nil];
+    [task addToQueue:self.operationQueue];
+}
+
+- (void)taskEnqueued:(SoloDownloadTask *)task {
+    [self willChangeValueForKey:@"state"];
+    _tasksEnqueued++;
+    [self didChangeValueForKey:@"state"];
+}
+
+- (void)taskDequeued:(SoloDownloadTask *)task {
+    [task removeObserver:self forKeyPath:@"queued"];
+    [task removeObserver:self forKeyPath:@"finished"];
+
+    [self willChangeValueForKey:@"state"];
+    _tasksEnqueued--;
+
+    if (task.lastError && _lastError == nil) {
+        _lastError = [task.lastError retain];
+
+        // cancel all tasks on failure
+        for (SoloDownloadTask *task in _tasks) {
+            [task cancel];
+        }
+    }
+    [self didChangeValueForKey:@"state"];
+}
+
+
+#pragma mark KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"queued"]) {
+        SoloDownloadTask *task = object;
+        BOOL oldValue = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
+        if (oldValue != task.queued)
+            if (task.queued) {
+                [self taskEnqueued:task];
+            } else {
+                [self taskDequeued:task];
+            }
+
+    } else if ([keyPath isEqualToString:@"finished"]) {
+        SoloDownloadTask *task = object;
+        [self willChangeValueForKey:@"state"];
+        BOOL oldValue = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
+        if (oldValue != task.finished)
+            if (task.finished) {
+                _tasksFinished++;
+            } else {
+                _tasksFinished--;
+            }
+        [self didChangeValueForKey:@"state"];
+    }
+}
+
+@end
+
+
 #pragma mark - SoloDownloadTask
 
 
@@ -23,8 +227,19 @@
 @implementation SoloDownloadTask
 
 @synthesize verbose=_verbose;
+
+@synthesize url=_url;
+@synthesize destinationPath=_destinationPath;
+@synthesize interimPath=_interimPath;
+
 @synthesize finished=_finished;
+@synthesize queued=_queued;
+@synthesize lastError=_lastError;
 @synthesize progress=_progress;
+
+- (id)initWithURL:(NSURL *)url destinationPath:(NSString *)destinationPath {
+    return [self initWithURL:url destinationPath:destinationPath interimPath:nil];
+}
 
 - (id)initWithURL:(NSURL *)url destinationPath:(NSString *)destinationPath interimPath:(NSString *)interimPath {
     self = [super init];
@@ -34,7 +249,7 @@
         if ([interimPath length]) {
             _interimPath = [interimPath copy];
         } else {
-            _interimPath = [[destinationPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:[NSString stringWithFormat:@"#%@#.%@", [[destinationPath lastPathComponent] stringByDeletingPathExtension], [destinationPath pathExtension]]];
+            _interimPath = [[[destinationPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:[NSString stringWithFormat:@"#%@#.%@", [[destinationPath lastPathComponent] stringByDeletingPathExtension], [destinationPath pathExtension]]] copy];
         }
         [self updateProgress];
     }
@@ -42,6 +257,7 @@
 }
 
 - (void)dealloc {
+    self.operation = nil;  // this class is not intended to be KVO-compliant for operation key, so this is safe
     [_url release], _url = nil;
     [_destinationPath release], _destinationPath = nil;
     [_interimPath release], _interimPath = nil;
@@ -54,7 +270,7 @@
 - (void)updateProgress {
     [self willChangeValueForKey:@"finished"];
     [self willChangeValueForKey:@"progress"];
-    
+
     struct stat st;
     if (0 == lstat([_destinationPath UTF8String], &st)) {
         _finished = YES;
@@ -66,10 +282,13 @@
         _finished = NO;
         _progress = 0;
     }
-    
+
     [self didChangeValueForKey:@"progress"];
     [self didChangeValueForKey:@"finished"];
 }
+
+
+#pragma mark Operation management
 
 - (void)setOperation:(NSOperation *)operation {
     if (_operation != operation) {
@@ -90,17 +309,44 @@
     return _operation;
 }
 
+- (void)addToQueue:(NSOperationQueue *)queue {
+    if (_queued) {
+        return;
+    }
+    [self willChangeValueForKey:@"queued"];
+    [queue addOperation:self.operation];
+    _queued = YES;
+    [self didChangeValueForKey:@"queued"];
+}
+
+- (void)cancel {
+    if (!_queued) {
+        return;
+    }
+    [self willChangeValueForKey:@"queued"];
+    [self.operation cancel];
+    self.operation = nil;
+    _queued = NO;
+    [self didChangeValueForKey:@"queued"];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"isFinished"]) {
         if ([_operation isFinished] && !_finished) {
             if (_operation.error) {
+                [_lastError release];
                 _lastError = [_operation.error retain];
             } else {
                 NSError *error = nil;
                 [[NSFileManager defaultManager] moveItemAtPath:_interimPath toPath:_destinationPath error:&error];
+                [_lastError release];
                 _lastError = [error retain];
             }
             [self updateProgress];
+            [self willChangeValueForKey:@"queued"];
+            _queued = NO;
+            self.operation = nil;
+            [self didChangeValueForKey:@"queued"];
         }
     } else if ([keyPath isEqualToString:@"progress"]) {
         [self updateProgress];
@@ -148,18 +394,18 @@
         [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
         return;
     }
-    
+
     if ([self isCancelled]) {
         [self willChangeValueForKey:@"isFinished"];
         [self finish];
         [self didChangeValueForKey:@"isFinished"];
         return;
     }
-    
+
     [self willChangeValueForKey:@"isExecuting"];
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
-    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:_url];
     _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (_connection) {
@@ -169,7 +415,7 @@
         NSMutableDictionary* details = [NSMutableDictionary dictionary];
         [details setValue:@"Unable to establish connections" forKey:NSLocalizedDescriptionKey];
         _error = [NSError errorWithDomain:@"HTTP" code:100 userInfo:details];
-        
+
         [self finish];
     }
 }
@@ -178,16 +424,16 @@
     NSLog(@"operation for <%@> finished. "
           @"status code: error: %@, data size: %u",
           _url, _error, [_receivedData length]);
-    
+
     [_receivedData release], _receivedData = nil;
     [_connection release], _connection = nil;
-    
+
     [self willChangeValueForKey:@"isExecuting"];
     [self willChangeValueForKey:@"isFinished"];
-    
+
     _isFinished = YES;
     _isExecuting = NO;
-    
+
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
 }
@@ -219,7 +465,7 @@
         NSLog(@"- [SoloDownloadOperation didReceiveData] - %u bytes (%@)", [data length], _url);
     }
     [_receivedData appendData:data];
-    
+
     [self willChangeValueForKey:@"progress"];
     _progress += [data length];
     [self didChangeValueForKey:@"progress"];
