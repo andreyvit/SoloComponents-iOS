@@ -14,6 +14,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.pagingView.horizontal = NO;
     self.pagingView.currentPageIndex = 3;
     [self currentPageDidChangeInPagingView:self.pagingView];
 }
