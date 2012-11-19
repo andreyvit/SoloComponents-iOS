@@ -42,9 +42,6 @@
     [[NSString stringWithFormat:@"Page %d", self.tag] drawInRect:textRect withFont:[UIFont boldSystemFontOfSize:17] lineBreakMode:UILineBreakModeClip alignment:UITextAlignmentCenter];
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 
 @end

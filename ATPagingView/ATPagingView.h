@@ -8,13 +8,13 @@
 
 @protocol ATPagingViewDelegate;
 
-// a wrapper around UIScrollView in (horizontal) paging mode, with an API similar to UITableView
+// a wrapper around UIScrollView in paging mode, with an API similar to UITableView
 @interface ATPagingView : UIView {
     // subviews
     UIScrollView *_scrollView;
 
     // properties
-    id<ATPagingViewDelegate> _delegate;
+    id<ATPagingViewDelegate> __weak _delegate;
     CGFloat _gapBetweenPages;
     NSInteger _pagesToPreload;
 
@@ -31,9 +31,10 @@
     BOOL _rotationInProgress;
     BOOL _scrollViewIsMoving;
     BOOL _recyclingEnabled;
+    BOOL _horizontal;
 }
 
-@property(nonatomic, assign) IBOutlet id<ATPagingViewDelegate> delegate;
+@property(nonatomic, weak) IBOutlet id<ATPagingViewDelegate> delegate;
 
 @property(nonatomic, assign) CGFloat gapBetweenPages;  // default is 20
 
@@ -52,6 +53,7 @@
 
 @property(nonatomic, assign, readonly) BOOL moving;
 @property(nonatomic, assign) BOOL recyclingEnabled;
+@property(nonatomic, assign) BOOL horizontal;   // default YES
 
 - (void)reloadData;  // must be called at least once to display something
 
@@ -91,6 +93,6 @@
     ATPagingView *_pagingView;
 }
 
-@property(nonatomic, retain) IBOutlet ATPagingView *pagingView;
+@property(nonatomic, strong) IBOutlet ATPagingView *pagingView;
 
 @end

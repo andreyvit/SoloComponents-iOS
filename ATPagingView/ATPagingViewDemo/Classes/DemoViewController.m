@@ -14,6 +14,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.pagingView.horizontal = NO;
     self.pagingView.currentPageIndex = 3;
     [self currentPageDidChangeInPagingView:self.pagingView];
 }
@@ -29,7 +30,7 @@
 - (UIView *)viewForPageInPagingView:(ATPagingView *)pagingView atIndex:(NSInteger)index {
     UIView *view = [pagingView dequeueReusablePage];
     if (view == nil) {
-        view = [[[DemoPageView alloc] init] autorelease];
+        view = [[DemoPageView alloc] init];
     }
     return view;
 }

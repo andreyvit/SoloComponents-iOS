@@ -39,6 +39,7 @@
 @synthesize moving=_scrollViewIsMoving;
 @synthesize previousPageIndex=_previousPageIndex;
 @synthesize recyclingEnabled=_recyclingEnabled;
+@synthesize horizontal=_horizontal;
 
 
 #pragma mark -
@@ -52,6 +53,7 @@
     _pagesToPreload = 1;
     _recyclingEnabled = YES;
     _firstLoadedPageIndex = _lastLoadedPageIndex = -1;
+    _horizontal = YES;
 
     // We are using an oversized UIScrollView to implement interpage gaps,
     // and we need it to clipped on the sides. This is important when
@@ -61,7 +63,7 @@
     _scrollView = [[UIScrollView alloc] initWithFrame:[self frameForScrollView]];
     _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _scrollView.pagingEnabled = YES;
-    _scrollView.backgroundColor = [UIColor blackColor];
+    _scrollView.backgroundColor = [UIColor clearColor];
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.bounces = YES;
@@ -84,11 +86,10 @@
 }
 
 - (void)dealloc {
-    [_scrollView release], _scrollView = nil;
+    _scrollView = nil;
     _delegate = nil;
-    [_recycledPages release], _recycledPages = nil;
-    [_visiblePages release], _visiblePages = nil;
-    [super dealloc];
+    _recycledPages = nil;
+    _visiblePages = nil;
 }
 
 
@@ -100,10 +101,21 @@
 }
 
 - (void)setPagesToPreload:(NSInteger)value {
+    BOOL reconfigure = _pagesToPreload != value;
     _pagesToPreload = value;
-    [self configurePages];
+    if (reconfigure) {
+        [self configurePages];
+    }
 }
 
+-(void)setHorizontal:(BOOL)value {
+    BOOL reconfigure = _horizontal != value;
+    _horizontal = value;
+    if (reconfigure) {
+        [self layoutIfNeeded]; // force call to layoutSubview to set _scrollView.frame
+        [self configurePages];
+    }
+}
 
 #pragma mark -
 #pragma mark Data
@@ -132,8 +144,11 @@
 }
 
 - (void)configurePages {
-    if (_scrollView.frame.size.width <= _gapBetweenPages + 1e-6)
+    if (_horizontal && (_scrollView.frame.size.width <= _gapBetweenPages + 1e-6)) {
         return;  // not our time yet
+    } else if (_scrollView.frame.size.height <= _gapBetweenPages + 1e-6) {
+        return;  // not our time yet
+    }
     if (_pageCount == 0 && _currentPageIndex > 0)
         return;  // still not our time
 
@@ -144,14 +159,24 @@
     // to avoid hiccups while scrolling, do not preload invisible pages temporarily
     BOOL quickMode = (_scrollViewIsMoving && _pagesToPreload > 0);
 
-    CGSize contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
+    CGSize contentSize;
+    if (_horizontal) {
+        contentSize = CGSizeMake(_scrollView.frame.size.width * _pageCount, _scrollView.frame.size.height);
+    } else {
+        contentSize = CGSizeMake(_scrollView.frame.size.width, _scrollView.frame.size.height * _pageCount);
+    }
+    
     if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)) {
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
         NSLog(@"configurePages: _scrollView.frame == %@, setting _scrollView.contentSize = %@",
               NSStringFromCGRect(_scrollView.frame), NSStringFromCGSize(contentSize));
 #endif
         _scrollView.contentSize = contentSize;
-        _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * _currentPageIndex, 0);
+        if (_horizontal) {
+            _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * _currentPageIndex, 0);
+        } else {
+            _scrollView.contentOffset = CGPointMake(0, _scrollView.frame.size.height * _currentPageIndex);
+        }
     } else {
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
         NSLog(@"configurePages: _scrollView.frame == %@", NSStringFromCGRect(_scrollView.frame));
@@ -159,7 +184,12 @@
     }
 
     CGRect visibleBounds = _scrollView.bounds;
-    NSInteger newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
+    NSInteger newPageIndex;
+    if (_horizontal) {
+        newPageIndex = MIN(MAX(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0), _pageCount - 1);
+    } else {
+        newPageIndex = MIN(MAX(floorf(CGRectGetMidY(visibleBounds) / CGRectGetHeight(visibleBounds)), 0), _pageCount - 1);
+    }
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
     NSLog(@"newPageIndex == %d", newPageIndex);
 #endif
@@ -279,7 +309,11 @@
     //
     // So we set the new size, but keep the old position here.
     CGSize pageSize = _scrollView.frame.size;
-    [self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(_scrollView.contentOffset.x + _gapBetweenPages/2, 0, pageSize.width - _gapBetweenPages, pageSize.height);
+    if (_horizontal) {
+        [self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(_scrollView.contentOffset.x + _gapBetweenPages/2, 0, pageSize.width - _gapBetweenPages, pageSize.height);
+    } else {
+        [self viewForPageAtIndex:_currentPageIndex].frame = CGRectMake(0, _scrollView.contentOffset.y + _gapBetweenPages/2, pageSize.width, pageSize.height - _gapBetweenPages);
+    }
 }
 
 - (void)didRotate {
@@ -287,7 +321,12 @@
     // changes, because we move the pages and adjust contentOffset simultaneously.
     for (UIView *view in _visiblePages)
         [self configurePage:view forIndex:view.tag];
-    _scrollView.contentOffset = CGPointMake(_currentPageIndex * _scrollView.frame.size.width, 0);
+
+    if (_horizontal) {
+        _scrollView.contentOffset = CGPointMake(_currentPageIndex * _scrollView.frame.size.width, 0);
+    } else {
+        _scrollView.contentOffset = CGPointMake(0, _currentPageIndex * _scrollView.frame.size.height);
+    }
 
     _rotationInProgress = NO;
 
@@ -302,9 +341,18 @@
 #ifdef AT_PAGING_VIEW_TRACE_LAYOUT
     NSLog(@"setCurrentPageIndex(%d): _scrollView.frame == %@", newPageIndex, NSStringFromCGRect(_scrollView.frame));
 #endif
-    if (_scrollView.frame.size.width > 0 && fabsf(_scrollView.frame.origin.x - (-_gapBetweenPages/2)) < 1e-6) {
-        _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * newPageIndex, 0);
+    if (_horizontal && (_scrollView.frame.size.width > 0 && fabsf(_scrollView.frame.origin.x - (-_gapBetweenPages/2)) < 1e-6) ) {
+		[UIView animateWithDuration:0.3
+						 animations:^{
+							 _scrollView.contentOffset = CGPointMake(_scrollView.frame.size.width * newPageIndex, 0);
+						 }];
+    } else if (_scrollView.frame.size.height > 0 && fabsf(_scrollView.frame.origin.y - (-_gapBetweenPages/2)) < 1e-6) {
+		[UIView animateWithDuration:0.3
+						 animations:^{
+							 _scrollView.contentOffset = CGPointMake(0, _scrollView.frame.size.height * newPageIndex);
+						 }];
     }
+
     _currentPageIndex = newPageIndex;
 }
 
@@ -324,23 +372,40 @@
         _scrollView.frame = newFrame;
     }
 
-    if (oldFrame.size.width != 0 && _scrollView.frame.size.width != oldFrame.size.width) {
-        // rotation is in progress, don't do any adjustments just yet
-    } else if (oldFrame.size.height != _scrollView.frame.size.height) {
-        // some other height change (the initial change from 0 to some specific size,
-        // or maybe an in-call status bar has appeared or disappeared)
-        [self configurePages];
+    if (_horizontal) {
+        if (oldFrame.size.width != 0 && _scrollView.frame.size.width != oldFrame.size.width) {
+            // rotation is in progress, don't do any adjustments just yet
+        } else if (oldFrame.size.height != _scrollView.frame.size.height) {
+            // some other height change (the initial change from 0 to some specific size,
+            // or maybe an in-call status bar has appeared or disappeared)
+            [self configurePages];
+        }
+    } else {
+        if (oldFrame.size.height != 0 && _scrollView.frame.size.height != oldFrame.size.height) {
+            // rotation is in progress, don't do any adjustments just yet
+        } else if (oldFrame.size.width != _scrollView.frame.size.width) {
+            // some other width change ?
+            [self configurePages];
+        }
     }
 }
 
 - (NSInteger)firstVisiblePageIndex {
     CGRect visibleBounds = _scrollView.bounds;
-    return MAX(floorf(CGRectGetMinX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0);
+    if (_horizontal) {
+        return MAX(floorf(CGRectGetMinX(visibleBounds) / CGRectGetWidth(visibleBounds)), 0);
+    } else {
+        return MAX(floorf(CGRectGetMinY(visibleBounds) / CGRectGetHeight(visibleBounds)), 0);
+    }
 }
 
 - (NSInteger)lastVisiblePageIndex {
     CGRect visibleBounds = _scrollView.bounds;
-    return MIN(floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds)), _pageCount - 1);
+    if (_horizontal) {
+        return MIN(floorf((CGRectGetMaxX(visibleBounds)-1) / CGRectGetWidth(visibleBounds)), _pageCount - 1);
+    } else {
+        return MIN(floorf((CGRectGetMaxY(visibleBounds)-1) / CGRectGetHeight(visibleBounds)), _pageCount - 1);
+    }
 }
 
 - (NSInteger)firstLoadedPageIndex {
@@ -353,16 +418,24 @@
 
 - (CGRect)frameForScrollView {
     CGSize size = self.bounds.size;
-    return CGRectMake(-_gapBetweenPages/2, 0, size.width + _gapBetweenPages, size.height);
+    if (_horizontal) {
+        return CGRectMake(-_gapBetweenPages/2, 0, size.width + _gapBetweenPages, size.height);
+    } else {
+        return CGRectMake(0, -_gapBetweenPages/2, size.width, size.height + _gapBetweenPages);
+    }
 }
 
 // not public because this is in scroll view coordinates
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
     CGFloat pageWidthWithGap = _scrollView.frame.size.width;
+    CGFloat pageHeightWithGap = _scrollView.frame.size.height;
     CGSize pageSize = self.bounds.size;
 
-    return CGRectMake(pageWidthWithGap * index + _gapBetweenPages/2,
-                      0, pageSize.width, pageSize.height);
+    if (_horizontal) {
+        return CGRectMake(pageWidthWithGap * index + _gapBetweenPages/2, 0, pageSize.width, pageSize.height);
+    } else {
+        return CGRectMake(0, pageHeightWithGap * index + _gapBetweenPages/2, pageSize.width, pageSize.height);
+    }
 }
 
 
@@ -388,7 +461,7 @@
 - (UIView *)dequeueReusablePage {
     UIView *result = [_recycledPages anyObject];
     if (result) {
-        [_recycledPages removeObject:[[result retain] autorelease]];
+        [_recycledPages removeObject:result];
     }
     return result;
 }
@@ -457,19 +530,10 @@
 
 
 #pragma mark -
-#pragma mark init/dealloc
-
-- (void)dealloc {
-    [_pagingView release], _pagingView = nil;
-    [super dealloc];
-}
-
-
-#pragma mark -
 #pragma mark View Loading
 
 - (void)loadView {
-    self.view = self.pagingView = [[[ATPagingView alloc] init] autorelease];
+    self.view = self.pagingView = [[ATPagingView alloc] init];
 }
 
 - (void)viewDidLoad {
