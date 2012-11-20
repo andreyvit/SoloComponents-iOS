@@ -89,7 +89,7 @@
     _scrollView = nil;
     _delegate = nil;
     _recycledPages = nil;
-    _visiblePages = nil;
+	_visiblePages = nil;
 }
 
 
@@ -352,8 +352,10 @@
 							 _scrollView.contentOffset = CGPointMake(0, _scrollView.frame.size.height * newPageIndex);
 						 }];
     }
-
+	
     _currentPageIndex = newPageIndex;
+	
+	[self configurePages];
 }
 
 
@@ -527,7 +529,6 @@
 @implementation ATPagingViewController
 
 @synthesize pagingView=_pagingView;
-
 
 #pragma mark -
 #pragma mark View Loading
